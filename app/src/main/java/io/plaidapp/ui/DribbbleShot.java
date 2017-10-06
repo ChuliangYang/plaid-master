@@ -578,6 +578,7 @@ public class DribbbleShot extends Activity {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             final int scrollY = shotDescription.getTop();
+//            final int scrollY = dy;
             imageView.setOffset(scrollY);
             fab.setOffset(fabOffset + scrollY);
         }

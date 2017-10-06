@@ -141,6 +141,7 @@ public class ParallaxScrimageView extends FourThreeImageView {
             super.onDraw(canvas);
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), scrimPaint);
         }
+//        super.onDraw(canvas);
     }
 
     @Override
@@ -150,6 +151,7 @@ public class ParallaxScrimageView extends FourThreeImageView {
             mergeDrawableStates(drawableState, STATE_PINNED);
         }
         return drawableState;
+//        return super.onCreateDrawableState(extraSpace);
     }
 
     public boolean isPinned() {
