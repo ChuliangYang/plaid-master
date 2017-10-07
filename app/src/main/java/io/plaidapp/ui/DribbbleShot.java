@@ -42,6 +42,7 @@ import android.text.format.DateUtils;
 import android.transition.AutoTransition;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -99,6 +100,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static io.plaidapp.util.AnimUtils.getFastOutSlowInInterpolator;
 
@@ -574,10 +576,12 @@ public class DribbbleShot extends Activity {
     };
 
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-
+        int scrollY=0;
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            final int scrollY = shotDescription.getTop();
+            final int scrollY1 = shotDescription.getTop();
+            scrollY-=dy;
+            Log.e(TAG, "scrollY1:"+scrollY1+"    scrollY:"+scrollY);
 //            final int scrollY = dy;
             imageView.setOffset(scrollY);
             fab.setOffset(fabOffset + scrollY);

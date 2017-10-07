@@ -25,11 +25,14 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Property;
 
 import io.plaidapp.R;
 import io.plaidapp.util.AnimUtils;
 import io.plaidapp.util.ColorUtils;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * An image view which supports parallax scrolling and applying a scrim onto it's content. Get it.
@@ -93,12 +96,14 @@ public class ParallaxScrimageView extends FourThreeImageView {
     }
 
     public void setOffset(int offset) {
-        offset = Math.max(minOffset, offset);
+//        offset = Math.max(minOffset, offset);
         if (offset != getTranslationY()) {
             setTranslationY(offset);
             imageOffset = (int) (offset * parallaxFactor);
-            clipBounds.set(0, -offset, getWidth(), getHeight());
-            setClipBounds(clipBounds);
+            Log.e(TAG, "setOffset: "+offset );
+//            clipBounds.set(0, -offset, getWidth(), getHeight());
+//            clipBounds.set(0, 400, 1000-offset, 1000);
+//            setClipBounds(clipBounds);
             setScrimAlpha(Math.min(
                     ((float) -offset / getMinimumHeight()) * maxScrimAlpha, maxScrimAlpha));
             postInvalidateOnAnimation();
@@ -136,7 +141,8 @@ public class ParallaxScrimageView extends FourThreeImageView {
             canvas.translate(0f, imageOffset);
             super.onDraw(canvas);
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), scrimPaint);
-            canvas.restoreToCount(saveCount);
+            Log.e(TAG, String.valueOf(canvas.getHeight()));
+//            canvas.restoreToCount(saveCount);
         } else {
             super.onDraw(canvas);
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), scrimPaint);
@@ -146,12 +152,12 @@ public class ParallaxScrimageView extends FourThreeImageView {
 
     @Override
     public int[] onCreateDrawableState(int extraSpace) {
-        final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-        if (isPinned) {
-            mergeDrawableStates(drawableState, STATE_PINNED);
-        }
-        return drawableState;
-//        return super.onCreateDrawableState(extraSpace);
+//        final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
+//        if (isPinned) {
+//            mergeDrawableStates(drawableState, STATE_PINNED);
+//        }
+//        return drawableState;
+        return super.onCreateDrawableState(extraSpace);
     }
 
     public boolean isPinned() {
