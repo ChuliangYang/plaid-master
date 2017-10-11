@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -31,10 +29,10 @@
         android:id="@+id/search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
-        android:outlineProvider="bounds"
         android:elevation="@dimen/z_app_bar"
-        android:transitionGroup="false"
-        android:theme="@style/SearchViewTheme">
+        android:outlineProvider="bounds"
+        android:theme="@style/SearchViewTheme"
+        android:transitionGroup="false">
 
         <View
             android:id="@+id/search_background"
@@ -55,8 +53,8 @@
             android:id="@+id/searchback_container"
             android:layout_width="96dp"
             android:layout_height="match_parent"
-            android:paddingStart="4dp"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:paddingStart="4dp">
 
             <ImageButton
                 android:id="@+id/searchback"
@@ -82,12 +80,12 @@
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/spacing_huge"
-            android:paddingBottom="@dimen/spacing_huge"
-            android:visibility="gone"
             android:indeterminate="true"
             android:indeterminateTint="?android:colorAccent"
-            android:indeterminateTintMode="src_in" />
+            android:indeterminateTintMode="src_in"
+            android:paddingBottom="@dimen/spacing_huge"
+            android:paddingTop="@dimen/spacing_huge"
+            android:visibility="gone" />
 
         <ViewStub
             android:id="@+id/stub_no_search_results"
@@ -99,22 +97,22 @@
             android:id="@+id/search_results"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:scrollbarStyle="outsideOverlay"
             android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
             android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/fab"
             android:layout_width="@dimen/fab_size"
             android:layout_height="@dimen/fab_size"
-            android:elevation="@dimen/z_fab"
-            android:background="@drawable/fab"
             android:layout_gravity="bottom|end"
-            android:layout_marginEnd="@dimen/padding_normal"
             android:layout_marginBottom="@dimen/padding_normal"
-            android:stateListAnimator="@animator/raise"
+            android:layout_marginEnd="@dimen/padding_normal"
+            android:background="@drawable/fab"
+            android:elevation="@dimen/z_fab"
             android:src="@drawable/ic_save_24dp"
+            android:stateListAnimator="@animator/raise"
             android:visibility="gone" />
 
         <View
@@ -129,14 +127,14 @@
             android:layout_width="448dp"
             android:layout_height="448dp"
             android:layout_gravity="bottom|end"
-            android:layout_marginEnd="@dimen/padding_normal"
             android:layout_marginBottom="@dimen/padding_normal"
+            android:layout_marginEnd="@dimen/padding_normal"
+            android:background="@drawable/fab"
+            android:elevation="@dimen/z_fab"
+            android:theme="@style/ExpandedFabTheme"
             android:translationX="196dp"
             android:translationY="196dp"
-            android:elevation="@dimen/z_fab"
-            android:background="@drawable/fab"
-            android:visibility="gone"
-            android:theme="@style/ExpandedFabTheme">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="252dp"
@@ -147,43 +145,43 @@
 
                 <CheckedTextView
                     android:id="@+id/save_dribbble"
+                    style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/spacing_normal"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="@dimen/spacing_normal"
-                    android:gravity="center_vertical"
                     android:checked="true"
                     android:drawableEnd="?android:listChoiceIndicatorMultiple"
                     android:drawablePadding="@dimen/spacing_normal"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/spacing_normal"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="@dimen/spacing_normal"
                     android:text="@string/confirm_save_dribbble_search"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
-                    style="?android:borderlessButtonStyle" />
+                    android:textAppearance="@android:style/TextAppearance.Material.Body2" />
 
                 <CheckedTextView
                     android:id="@+id/save_designer_news"
+                    style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/spacing_normal"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="@dimen/spacing_normal"
-                    android:gravity="center_vertical"
                     android:checked="true"
                     android:drawableEnd="?android:listChoiceIndicatorMultiple"
                     android:drawablePadding="@dimen/spacing_normal"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/spacing_normal"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="@dimen/spacing_normal"
                     android:text="@string/confirm_save_designer_news_search"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
-                    style="?android:borderlessButtonStyle" />
+                    android:textAppearance="@android:style/TextAppearance.Material.Body2" />
 
                 <Button
                     android:id="@+id/save_confirmed"
+                    style="?android:borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_save_24dp"
                     android:drawablePadding="@dimen/padding_normal"
                     android:padding="@dimen/padding_normal"
-                    android:text="@string/confirm_save_search"
-                    style="?android:borderlessButtonStyle" />
+                    android:text="@string/confirm_save_search" />
 
             </LinearLayout>
 

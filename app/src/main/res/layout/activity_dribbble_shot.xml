@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/draggable_frame"
@@ -42,15 +40,15 @@
         android:id="@+id/shot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/shot_collapsed_app_bar_height"
+        android:background="@color/light_grey"
         android:foreground="@drawable/mid_grey_ripple"
+        android:minHeight="@dimen/shot_collapsed_app_bar_height"
         android:stateListAnimator="@animator/app_bar_pin"
         android:transitionName="@string/transition_shot"
-        android:background="@color/light_grey"
-        app:scrimColor="@color/scrim"
-        app:scrimAlpha="0"
         app:maxScrimAlpha="0.4"
-        app:parallaxFactor="-0.5" />
+        app:parallaxFactor="-0.5"
+        app:scrimAlpha="0"
+        app:scrimColor="@color/scrim" />
 
     <!-- We're 'faking' a toolbar here as we just want a back button.
          This approach lets the borderless ripple extend beyond the back button's bounds,
@@ -68,10 +66,10 @@
             android:id="@+id/back"
             android:layout_width="?android:actionBarSize"
             android:layout_height="?android:actionBarSize"
-            android:layout_marginEnd="@dimen/padding_normal"
             android:layout_marginBottom="@dimen/padding_normal"
-            android:src="@drawable/ic_arrow_back"
-            android:background="@drawable/mid_grey_ripple" />
+            android:layout_marginEnd="@dimen/padding_normal"
+            android:background="@drawable/mid_grey_ripple"
+            android:src="@drawable/ic_arrow_back" />
 
     </FrameLayout>
 
@@ -86,22 +84,22 @@
         android:id="@+id/dribbble_comments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/padding_normal"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:scrollbars="vertical"
+        android:paddingBottom="@dimen/padding_normal"
         android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
     <io.plaidapp.ui.widget.FABToggle
         android:id="@+id/fab_heart"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
-        android:elevation="@dimen/z_fab_over_touchable_app_bar"
-        android:background="@drawable/fab_dribbble_fav"
         android:layout_gravity="end"
         android:layout_marginEnd="@dimen/padding_normal"
-        android:stateListAnimator="@animator/raise"
-        android:src="@drawable/asl_fab_heart" />
+        android:background="@drawable/fab_dribbble_fav"
+        android:elevation="@dimen/z_fab_over_touchable_app_bar"
+        android:src="@drawable/asl_fab_heart"
+        android:stateListAnimator="@animator/raise" />
 
 </io.plaidapp.ui.widget.ElasticDragDismissFrameLayout>

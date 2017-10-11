@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +14,9 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/comments_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,9 +42,9 @@
         android:id="@+id/comments_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/extended_height_toolbar"
-        android:paddingBottom="@dimen/padding_normal"
         android:clipToPadding="false"
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingTop="@dimen/extended_height_toolbar"
         android:scrollbars="vertical" />
 
     <io.plaidapp.ui.widget.CollapsingTitleLayout
@@ -55,16 +53,16 @@
         android:layout_height="wrap_content"
         android:minHeight="@dimen/extended_height_toolbar"
         android:textAppearance="@style/TextAppearance.ToolbarTitle"
-        android:transitionName="@string/transition_story_title"
+        android:theme="@style/PlaidDarkOverlay"
         android:transitionGroup="false"
-        android:theme="@style/PlaidDarkOverlay">
+        android:transitionName="@string/transition_story_title">
 
         <io.plaidapp.ui.widget.PinnedOffsetView
             android:id="@+id/story_title_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="?android:actionBarSize"
             android:background="?android:colorPrimary"
+            android:minHeight="?android:actionBarSize"
             android:stateListAnimator="@animator/app_bar_pin"
             android:transitionName="@string/transition_story_title_background" />
 
@@ -72,12 +70,12 @@
             android:id="@+id/story_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
-            android:navigationIcon="@drawable/ic_arrow_back"
-            android:elevation="@dimen/z_app_bar"
-            android:contentInsetStart="@dimen/keyline_1"
             android:contentInsetEnd="@dimen/padding_normal"
-            android:transitionGroup="true"
-            android:theme="@style/PlaidDarkOverlay" />
+            android:contentInsetStart="@dimen/keyline_1"
+            android:elevation="@dimen/z_app_bar"
+            android:navigationIcon="@drawable/ic_arrow_back"
+            android:theme="@style/PlaidDarkOverlay"
+            android:transitionGroup="true" />
 
     </io.plaidapp.ui.widget.CollapsingTitleLayout>
 

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +14,9 @@
   limitations under the License.
   -->
 
-<ScrollView
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:nestedScrollingEnabled="true"
@@ -32,8 +30,8 @@
         <io.plaidapp.ui.widget.CutoutTextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/about_header_height"
-            android:text="@string/app_name"
             android:fontFamily="@font/roboto_mono"
+            android:text="@string/app_name"
             app:foregroundColor="?android:colorPrimary" />
 
         <io.plaidapp.ui.widget.BaselineGridTextView
@@ -42,10 +40,10 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@color/background_light"
+            android:paddingBottom="@dimen/spacing_large"
+            android:paddingEnd="@dimen/padding_normal"
             android:paddingStart="@dimen/padding_normal"
             android:paddingTop="@dimen/padding_normal"
-            android:paddingEnd="@dimen/padding_normal"
-            android:paddingBottom="@dimen/spacing_large"
             android:textAppearance="@style/TextAppearance.About"
             android:textColorHighlight="?android:colorPrimary"
             android:textColorLink="@color/plaid_links" />

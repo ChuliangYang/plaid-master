@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +14,14 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.BaselineGridTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<io.plaidapp.ui.widget.BaselineGridTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
+    style="?android:attr/dropDownItemStyle"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/mid_grey_bounded_ripple"
+    android:ellipsize="marquee"
+    android:maxLines="1"
     android:paddingEnd="@dimen/padding_normal"
     android:paddingStart="@dimen/padding_normal"
-    android:background="@drawable/mid_grey_bounded_ripple"
-    android:maxLines="1"
-    android:ellipsize="marquee"
-    android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
-    style="?android:attr/dropDownItemStyle" />
+    android:textAppearance="?android:attr/textAppearanceLargePopupMenu" />

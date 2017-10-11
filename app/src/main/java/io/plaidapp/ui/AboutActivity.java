@@ -64,9 +64,12 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  */
 public class AboutActivity extends Activity {
 
-    @BindView(R.id.draggable_frame) ElasticDragDismissFrameLayout draggableFrame;
-    @BindView(R.id.pager) ViewPager pager;
-    @BindView(R.id.indicator) InkPageIndicator pageIndicator;
+    @BindView(R.id.draggable_frame)
+    ElasticDragDismissFrameLayout draggableFrame;
+    @BindView(R.id.pager)
+    ViewPager pager;
+    @BindView(R.id.indicator)
+    InkPageIndicator pageIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,17 +99,22 @@ public class AboutActivity extends Activity {
 
     static class AboutPagerAdapter extends PagerAdapter {
 
-        private View aboutPlaid;
-        @Nullable @BindView(R.id.about_description) TextView plaidDescription;
-        private View aboutIcon;
-        @Nullable @BindView(R.id.icon_description) TextView iconDescription;
-        private View aboutLibs;
-        @Nullable @BindView(R.id.libs_list) RecyclerView libsList;
-
         private final LayoutInflater layoutInflater;
         private final Bypass markdown;
         private final Activity host;
         private final Resources resources;
+        @Nullable
+        @BindView(R.id.about_description)
+        TextView plaidDescription;
+        @Nullable
+        @BindView(R.id.icon_description)
+        TextView iconDescription;
+        @Nullable
+        @BindView(R.id.libs_list)
+        RecyclerView libsList;
+        private View aboutPlaid;
+        private View aboutIcon;
+        private View aboutLibs;
 
         AboutPagerAdapter(@NonNull Activity host) {
             this.host = host;
@@ -190,8 +198,6 @@ public class AboutActivity extends Activity {
 
     private static class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private static final int VIEW_TYPE_INTRO = 0;
-        private static final int VIEW_TYPE_LIBRARY = 1;
         static final Library[] libs = {
                 new Library("Android support libraries",
                         "The Android support libraries offer a number of features that are not built into the framework.",
@@ -228,7 +234,8 @@ public class AboutActivity extends Activity {
                         "http://square.github.io/retrofit/",
                         "https://avatars.githubusercontent.com/u/82592",
                         false)};
-
+        private static final int VIEW_TYPE_INTRO = 0;
+        private static final int VIEW_TYPE_LIBRARY = 1;
         final Activity host;
 
         LibraryAdapter(Activity host) {
@@ -247,7 +254,8 @@ public class AboutActivity extends Activity {
             throw new InvalidParameterException();
         }
 
-        private @NonNull LibraryHolder createLibraryHolder(ViewGroup parent) {
+        private @NonNull
+        LibraryHolder createLibraryHolder(ViewGroup parent) {
             final LibraryHolder holder = new LibraryHolder(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.library, parent, false));
             View.OnClickListener clickListener = new View.OnClickListener() {
@@ -302,10 +310,14 @@ public class AboutActivity extends Activity {
 
     static class LibraryHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.library_image) ImageView image;
-        @BindView(R.id.library_name) TextView name;
-        @BindView(R.id.library_description) TextView description;
-        @BindView(R.id.library_link) Button link;
+        @BindView(R.id.library_image)
+        ImageView image;
+        @BindView(R.id.library_name)
+        TextView name;
+        @BindView(R.id.library_description)
+        TextView description;
+        @BindView(R.id.library_link)
+        Button link;
 
         LibraryHolder(View itemView) {
             super(itemView);

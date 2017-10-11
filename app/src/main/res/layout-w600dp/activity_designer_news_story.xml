@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2016 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<io.plaidapp.ui.widget.ElasticDragDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/comments_container"
     android:layout_width="match_parent"
@@ -43,24 +41,24 @@
             android:id="@+id/back"
             android:layout_width="?android:actionBarSize"
             android:layout_height="?android:actionBarSize"
-            android:layout_marginEnd="@dimen/padding_normal"
             android:layout_marginBottom="@dimen/padding_normal"
-            android:src="@drawable/ic_arrow_back"
-            android:background="?android:selectableItemBackgroundBorderless" />
+            android:layout_marginEnd="@dimen/padding_normal"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back" />
 
     </FrameLayout>
 
     <io.plaidapp.ui.widget.DynamicTypeTextView
         android:id="@+id/story_title"
+        style="@style/Widget.Plaid.CollapsingTitle"
         android:layout_width="@dimen/designer_news_story_comments_max_width"
         android:layout_height="@dimen/designer_news_story_title_height"
         android:layout_gravity="top|center_horizontal"
+        android:ellipsize="end"
         android:gravity="start|bottom"
-        android:paddingStart="@dimen/spacing_normal"
         android:paddingBottom="@dimen/spacing_normal"
         android:paddingEnd="@dimen/spacing_normal"
-        android:ellipsize="end"
-        style="@style/Widget.Plaid.CollapsingTitle" />
+        android:paddingStart="@dimen/spacing_normal" />
 
     <!-- description added as header in the adapter
          see layout/designer_news_story_description -->
@@ -70,10 +68,10 @@
         android:layout_width="@dimen/designer_news_story_comments_max_width"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="@dimen/designer_news_story_title_height"
         android:clipToPadding="false"
+        android:paddingTop="@dimen/designer_news_story_title_height"
         android:scrollbars="vertical" />
 
-    <include layout="@layout/designer_news_story_fab"/>
+    <include layout="@layout/designer_news_story_fab" />
 
 </io.plaidapp.ui.widget.ElasticDragDismissFrameLayout>

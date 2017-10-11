@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +14,9 @@
   limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:onClick="dismiss"
@@ -28,17 +26,17 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_large"
-        android:layout_marginEnd="@dimen/spacing_large"
-        android:paddingStart="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_dialog"
-        android:paddingEnd="@dimen/padding_dialog"
-        android:paddingBottom="@dimen/padding_normal"
-        android:orientation="vertical"
         android:layout_gravity="center"
-        android:elevation="@dimen/z_fab"
+        android:layout_marginEnd="@dimen/spacing_large"
+        android:layout_marginStart="@dimen/spacing_large"
         android:background="@drawable/dialog_background"
         android:clickable="true"
+        android:elevation="@dimen/z_fab"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingEnd="@dimen/padding_dialog"
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_dialog"
         android:transitionName="@string/transition_designer_news_login">
 
         <io.plaidapp.ui.widget.BaselineGridTextView
@@ -63,18 +61,18 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/username"
                 android:inputType="textEmailAddress"
-                android:textColorHighlight="@color/designer_news_link_highlight"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                android:textColorHighlight="@color/designer_news_link_highlight" />
 
         </android.support.design.widget.TextInputLayout>
 
         <CheckBox
             android:id="@+id/permission_primer"
+            style="@style/Widget.Plaid.HintCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_normal"
-            android:text="@string/get_accounts_permission_primer_message"
-            style="@style/Widget.Plaid.HintCheckBox" />
+            android:text="@string/get_accounts_permission_primer_message" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/password_float_label"
@@ -82,8 +80,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_micro"
             app:hintTextAppearance="@style/TextAppearance.FloatLabelHint"
-            app:passwordToggleEnabled="true"
             app:passwordToggleDrawable="@drawable/asl_password_visibility"
+            app:passwordToggleEnabled="true"
             app:passwordToggleTint="?colorControlNormal">
 
             <io.plaidapp.ui.widget.PasswordEntry
@@ -104,13 +102,13 @@
 
             <Button
                 android:id="@+id/signup"
+                style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:text="@string/sign_up"
-                android:textColor="?android:colorAccent"
                 android:onClick="signup"
-                style="?android:borderlessButtonStyle" />
+                android:text="@string/sign_up"
+                android:textColor="?android:colorAccent" />
 
             <Button
                 android:id="@+id/login"
@@ -118,9 +116,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:enabled="false"
+                android:onClick="doLogin"
                 android:text="@string/dn_login_action"
-                android:textAppearance="@style/TextAppearance.DarkButton"
-                android:onClick="doLogin" />
+                android:textAppearance="@style/TextAppearance.DarkButton" />
 
         </FrameLayout>
 
