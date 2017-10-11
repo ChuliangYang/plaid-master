@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<vector
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportHeight="@integer/comment_lines_add_viewport_height"
@@ -24,8 +22,8 @@
 
     <path
         android:name="comment_bubble"
-        android:pathData="@string/path_comment_bubble"
-        android:fillColor="@color/comment_bubble" />
+        android:fillColor="@color/comment_bubble"
+        android:pathData="@string/path_comment_bubble" />
 
     <group
         android:name="@string/comment_lines_add_group"

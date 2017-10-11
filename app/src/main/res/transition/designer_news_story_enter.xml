@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2016 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +14,10 @@
   limitations under the License.
   -->
 
-<transitionSet
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:transitionOrdering="together"
-    android:interpolator="@android:interpolator/linear_out_slow_in">
+    android:interpolator="@android:interpolator/linear_out_slow_in"
+    android:transitionOrdering="together">
 
     <transitionSet>
         <targets>
@@ -31,13 +29,13 @@
         </targets>
         <transition
             class="io.plaidapp.ui.transitions.StaggeredDistanceSlide"
-            app:spread="3"
-            android:startDelay="100"
             android:duration="300"
-            android:interpolator="@android:interpolator/linear_out_slow_in" />
+            android:interpolator="@android:interpolator/linear_out_slow_in"
+            android:startDelay="100"
+            app:spread="3" />
         <fade
-            android:startDelay="250"
-            android:duration="200" />
+            android:duration="200"
+            android:startDelay="250" />
     </transitionSet>
 
     <fade android:duration="200">
@@ -47,8 +45,8 @@
     </fade>
 
     <fade
-        android:startDelay="250"
-        android:duration="250">
+        android:duration="250"
+        android:startDelay="250">
         <targets>
             <target android:targetId="@id/story_toolbar" />
         </targets>
@@ -67,13 +65,13 @@
         </targets>
         <transition
             class="io.plaidapp.ui.transitions.Pop"
-            android:startDelay="350"
             android:duration="300"
-            android:interpolator="@android:interpolator/linear_out_slow_in" />
+            android:interpolator="@android:interpolator/linear_out_slow_in"
+            android:startDelay="350" />
         <slide
+            android:duration="360"
             android:slideEdge="bottom"
-            android:startDelay="100"
-            android:duration="360" />
+            android:startDelay="100" />
     </transitionSet>
 
 </transitionSet>

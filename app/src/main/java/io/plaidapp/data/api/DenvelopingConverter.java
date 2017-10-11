@@ -74,7 +74,8 @@ public class DenvelopingConverter extends Converter.Factory {
         };
     }
 
-    private @Nullable String getPayloadName(Annotation[] annotations) {
+    private @Nullable
+    String getPayloadName(Annotation[] annotations) {
         if (annotations == null) return null;
         for (Annotation annotation : annotations) {
             if (annotation instanceof EnvelopePayload) {

@@ -17,15 +17,15 @@
   -->
 
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="18sp"
-        android:height="18sp"
-        android:viewportWidth="48"
-        android:viewportHeight="48">
+    android:width="18sp"
+    android:height="18sp"
+    android:viewportHeight="48"
+    android:viewportWidth="48">
 
     <!-- sized in sp as this is designed to be shown in an image span within text, so it is
          sized to match-->
 
     <path
-        android:pathData="@string/path_filter"
-        android:fillColor="@color/text_primary_light"/>
+        android:fillColor="@color/text_primary_light"
+        android:pathData="@string/path_filter" />
 </vector>

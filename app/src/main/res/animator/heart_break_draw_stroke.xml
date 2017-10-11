@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,38 +14,37 @@
   limitations under the License.
   -->
 
-<set
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<set xmlns:android="http://schemas.android.com/apk/res/android"
     android:ordering="together">
 
     <!-- first reset state as the animation is delayed -->
     <objectAnimator
+        android:duration="0"
         android:propertyName="trimPathEnd"
         android:valueFrom="0"
-        android:valueTo="0"
-        android:duration="0" />
+        android:valueTo="0" />
 
     <objectAnimator
+        android:duration="0"
         android:propertyName="strokeAlpha"
         android:valueFrom="0.4"
-        android:valueTo="0.4"
-        android:duration="0" />
+        android:valueTo="0.4" />
 
     <!-- now trim-reveal & fade in the heart path -->
     <objectAnimator
-        android:propertyName="trimPathEnd"
-        android:valueFrom="0"
-        android:valueTo="1"
-        android:startOffset="400"
         android:duration="300"
-        android:interpolator="@android:interpolator/fast_out_slow_in" />
+        android:interpolator="@android:interpolator/fast_out_slow_in"
+        android:propertyName="trimPathEnd"
+        android:startOffset="400"
+        android:valueFrom="0"
+        android:valueTo="1" />
 
     <objectAnimator
-        android:propertyName="strokeAlpha"
-        android:valueFrom="0.4"
-        android:valueTo="1"
-        android:startOffset="400"
         android:duration="300"
-        android:interpolator="@android:interpolator/fast_out_slow_in" />
+        android:interpolator="@android:interpolator/fast_out_slow_in"
+        android:propertyName="strokeAlpha"
+        android:startOffset="400"
+        android:valueFrom="0.4"
+        android:valueTo="1" />
 
 </set>

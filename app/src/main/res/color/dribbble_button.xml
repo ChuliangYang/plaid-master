@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,10 +16,8 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_enabled="false"
-          android:alpha="0.26"
-          android:color="@color/dribbble"/>
+    <item android:alpha="0.26" android:color="@color/dribbble" android:state_enabled="false" />
 
-    <item android:color="@color/dribbble"/>
+    <item android:color="@color/dribbble" />
 
 </selector>

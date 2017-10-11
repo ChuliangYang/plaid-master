@@ -47,7 +47,8 @@ public class BaselineGridTextView extends AppCompatTextView {
     private boolean maxLinesByHeight = false;
     private int extraTopPadding = 0;
     private int extraBottomPadding = 0;
-    private @FontRes int fontResId = 0;
+    private @FontRes
+    int fontResId = 0;
 
     public BaselineGridTextView(Context context) {
         this(context, null);
@@ -111,7 +112,8 @@ public class BaselineGridTextView extends AppCompatTextView {
         requestLayout();
     }
 
-    public @FontRes int getFontResId() {
+    public @FontRes
+    int getFontResId() {
         return fontResId;
     }
 

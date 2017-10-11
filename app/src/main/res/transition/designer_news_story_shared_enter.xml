@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<transitionSet
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:transitionOrdering="together">
 
@@ -38,9 +36,9 @@
         class="io.plaidapp.ui.transitions.StretchyChangeBounds"
         android:color="?android:colorPrimary"
         app:leadingDuration="300"
-        app:trailingSpeed="0.7"
+        app:maxTrailingDuration="400"
         app:minTrailingDuration="300"
-        app:maxTrailingDuration="400">
+        app:trailingSpeed="0.7">
         <targets>
             <target android:targetId="@id/story_title_background" />
         </targets>
@@ -52,10 +50,10 @@
         </targets>
         <transition
             class="io.plaidapp.ui.transitions.ReflowText"
-            app:velocity="700dp"
-            app:minDuration="200"
             app:maxDuration="350"
-            app:staggerDelay="30">
+            app:minDuration="200"
+            app:staggerDelay="30"
+            app:velocity="700dp">
             <pathMotion class="io.plaidapp.ui.transitions.GravityArcMotion" />
         </transition>
         <transition

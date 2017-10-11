@@ -47,6 +47,24 @@ public interface DribbbleService {
 
 
     /* Shots */
+    String SHOT_TYPE_ANIMATED = "animated";
+    String SHOT_TYPE_ATTACHMENTS = "attachments";
+    String SHOT_TYPE_DEBUTS = "debuts";
+    String SHOT_TYPE_PLAYOFFS = "playoffs";
+    String SHOT_TYPE_REBOUNDS = "rebounds";
+    String SHOT_TYPE_TEAMS = "teams";
+    String SHOT_TIMEFRAME_WEEK = "week";
+    String SHOT_TIMEFRAME_MONTH = "month";
+    String SHOT_TIMEFRAME_YEAR = "year";
+
+    /* Shot likes */
+    String SHOT_TIMEFRAME_EVER = "ever";
+    String SHOT_SORT_COMMENTS = "comments";
+    String SHOT_SORT_RECENT = "recent";
+    String SHOT_SORT_VIEWS = "views";
+
+
+    /* Comments */
 
     @GET("v1/shots")
     Call<List<Shot>> getPopular(@Query("page") Integer page,
@@ -76,6 +94,9 @@ public interface DribbbleService {
     Call<List<Shot>> getFollowing(@Query("page") Integer page,
                                   @Query("per_page") Integer pageSize);
 
+
+    /* Users */
+
     /* List the authenticated user’s shot likes */
     @GET("v1/user/likes")
     Call<List<Like>> getUserLikes(@Query("page") Integer page,
@@ -85,8 +106,6 @@ public interface DribbbleService {
     @GET("v1/user/shots")
     Call<List<Shot>> getUserShots(@Query("page") Integer page,
                                   @Query("per_page") Integer pageSize);
-
-    /* Shot likes */
 
     @GET("v1/shots/{id}/likes")
     Call<List<Like>> getShotLikes(@Path("id") long shotId,
@@ -102,9 +121,6 @@ public interface DribbbleService {
     @DELETE("v1/shots/{id}/like")
     Call<Void> unlike(@Path("id") long shotId);
 
-
-    /* Comments */
-
     @GET("v1/shots/{id}/comments")
     Call<List<Comment>> getComments(@Path("id") long shotId,
                                     @Query("page") Integer page,
@@ -118,7 +134,6 @@ public interface DribbbleService {
     Call<Comment> postComment(@Path("shot") long shotId,
                               @Query("body") String body);
 
-
     @DELETE("v1/shots/{shot}/comments/{id}")
     Call<Void> deleteComment(@Path("shot") long shotId,
                              @Path("id") long commentId);
@@ -131,12 +146,12 @@ public interface DribbbleService {
     Call<Like> likeComment(@Path("shot") long shotId,
                            @Path("id") long commentId);
 
+
+    /* Teams */
+
     @DELETE("v1/shots/{shot}/comments/{id}/like")
     Call<Void> unlikeComment(@Path("shot") long shotId,
                              @Path("id") long commentId);
-
-
-    /* Users */
 
     @GET("v1/users/{user}")
     Call<User> getUser(@Path("user") long userId);
@@ -146,6 +161,9 @@ public interface DribbbleService {
 
     @GET("v1/user")
     Call<User> getAuthenticatedUser();
+
+
+    /* Magic Constants */
 
     @GET("v1/users/{user}/shots")
     Call<List<Shot>> getUsersShots(@Path("user") long userId,
@@ -180,9 +198,6 @@ public interface DribbbleService {
                                         @Query("page") Integer page,
                                         @Query("per_page") Integer pageSize);
 
-
-    /* Teams */
-
     @GET("v1/teams/{team}/shots")
     Call<List<Shot>> getTeamShots(@Path("team") long teamId,
                                   @Query("page") Integer page,
@@ -203,23 +218,6 @@ public interface DribbbleService {
                                     @Query("page") Integer page,
                                     @Query("per_page") Integer pageSize);
 
-
-    /* Magic Constants */
-
-    String SHOT_TYPE_ANIMATED = "animated";
-    String SHOT_TYPE_ATTACHMENTS = "attachments";
-    String SHOT_TYPE_DEBUTS = "debuts";
-    String SHOT_TYPE_PLAYOFFS = "playoffs";
-    String SHOT_TYPE_REBOUNDS = "rebounds";
-    String SHOT_TYPE_TEAMS = "teams";
-    String SHOT_TIMEFRAME_WEEK = "week";
-    String SHOT_TIMEFRAME_MONTH = "month";
-    String SHOT_TIMEFRAME_YEAR = "year";
-    String SHOT_TIMEFRAME_EVER = "ever";
-    String SHOT_SORT_COMMENTS = "comments";
-    String SHOT_SORT_RECENT = "recent";
-    String SHOT_SORT_VIEWS = "views";
-
     // Shot type
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -230,7 +228,8 @@ public interface DribbbleService {
             SHOT_TYPE_REBOUNDS,
             SHOT_TYPE_TEAMS
     })
-    @interface ShotType {}
+    @interface ShotType {
+    }
 
     // Shot timeframe
     @Retention(RetentionPolicy.SOURCE)
@@ -240,7 +239,8 @@ public interface DribbbleService {
             SHOT_TIMEFRAME_YEAR,
             SHOT_TIMEFRAME_EVER
     })
-    @interface ShotTimeframe {}
+    @interface ShotTimeframe {
+    }
 
     // Short sort order
     @Retention(RetentionPolicy.SOURCE)
@@ -249,6 +249,7 @@ public interface DribbbleService {
             SHOT_SORT_RECENT,
             SHOT_SORT_VIEWS
     })
-    @interface ShotSort {}
+    @interface ShotSort {
+    }
 
 }

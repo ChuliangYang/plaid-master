@@ -54,15 +54,6 @@ public class DesignerNewsPrefs {
     private String userAvatar;
     private DesignerNewsService api;
 
-    public static DesignerNewsPrefs get(Context context) {
-        if (singleton == null) {
-            synchronized (DesignerNewsPrefs.class) {
-                singleton = new DesignerNewsPrefs(context);
-            }
-        }
-        return singleton;
-    }
-
     private DesignerNewsPrefs(Context context) {
         prefs = context.getApplicationContext().getSharedPreferences(DESIGNER_NEWS_PREF, Context
                 .MODE_PRIVATE);
@@ -73,6 +64,15 @@ public class DesignerNewsPrefs {
             username = prefs.getString(KEY_USER_NAME, null);
             userAvatar = prefs.getString(KEY_USER_AVATAR, null);
         }
+    }
+
+    public static DesignerNewsPrefs get(Context context) {
+        if (singleton == null) {
+            synchronized (DesignerNewsPrefs.class) {
+                singleton = new DesignerNewsPrefs(context);
+            }
+        }
+        return singleton;
     }
 
     public boolean isLoggedIn() {

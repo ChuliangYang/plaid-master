@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +14,16 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.ForegroundLinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<io.plaidapp.ui.widget.ForegroundLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/padding_normal"
-    android:orientation="horizontal"
     android:baselineAligned="false"
+    android:foreground="?android:selectableItemBackground"
     android:minHeight="?android:listPreferredItemHeightSmall"
-    android:theme="@style/PlaidDarkOverlay"
-    android:foreground="?android:selectableItemBackground">
+    android:orientation="horizontal"
+    android:padding="@dimen/padding_normal"
+    android:theme="@style/PlaidDarkOverlay">
 
     <ImageView
         android:id="@+id/filter_icon"
@@ -38,11 +36,11 @@
         android:id="@+id/filter_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_normal"
         android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/padding_normal"
         android:ellipsize="end"
-        android:textAppearance="@style/TextAppearance.Filter"
         android:stateListAnimator="@animator/filter_active"
-        tools:text="Popular Designer News"/>
+        android:textAppearance="@style/TextAppearance.Filter"
+        tools:text="Popular Designer News" />
 
 </io.plaidapp.ui.widget.ForegroundLinearLayout>

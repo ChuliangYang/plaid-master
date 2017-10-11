@@ -73,7 +73,8 @@ public class CollapsingTitleLayout extends FrameLayout implements ReflowText.Ref
     private CharSequence title;
     private SpannableStringBuilder displayText;
     private TextPaint paint;
-    private @FontRes int fontResId;
+    private @FontRes
+    int fontResId;
     private float textTop;
     private float scrollOffset;
     private int scrollRange;
@@ -488,7 +489,7 @@ public class CollapsingTitleLayout extends FrameLayout implements ReflowText.Ref
         float currentAlpha = 1f;
 
         Line(int startIndex, int endIndex, TextColorSpan span,
-                    int fullAlphaScrollOffset, int zeroAlphaScrollOffset) {
+             int fullAlphaScrollOffset, int zeroAlphaScrollOffset) {
             this.startIndex = startIndex;
             this.endIndex = endIndex;
             this.span = span;

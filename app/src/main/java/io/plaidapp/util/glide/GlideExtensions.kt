@@ -13,6 +13,7 @@
  */
 
 @file:JvmName("GlideUtils")
+
 package io.plaidapp.util.glide
 
 import android.graphics.Bitmap

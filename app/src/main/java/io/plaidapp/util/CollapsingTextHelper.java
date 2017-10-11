@@ -97,6 +97,45 @@ public final class CollapsingTextHelper {
         mCurrentBounds = new RectF();
     }
 
+    private static float lerp(float startValue, float endValue, float fraction,
+                              Interpolator interpolator) {
+        if (interpolator != null) {
+            fraction = interpolator.getInterpolation(fraction);
+        }
+        return AnimUtils.lerp(startValue, endValue, fraction);
+    }
+
+    private static boolean rectEquals(Rect r, int left, int top, int right, int bottom) {
+        return !(r.left != left || r.top != top || r.right != right || r.bottom != bottom);
+    }
+
+    /**
+     * Returns true if {@code value} is 'close' to it's closest decimal value. Close is currently
+     * defined as it's difference being < 0.001.
+     */
+    private static boolean isClose(float value, float targetValue) {
+        return Math.abs(value - targetValue) < 0.001f;
+    }
+
+    /**
+     * Blend {@code color1} and {@code color2} using the given ratio.
+     *
+     * @param ratio of which to blend. 0.0 will return {@code color1}, 0.5 will give an even blend,
+     *              1.0 will return {@code color2}.
+     */
+    private static int blendColors(int color1, int color2, float ratio) {
+        final float inverseRatio = 1f - ratio;
+        float a = (Color.alpha(color1) * inverseRatio) + (Color.alpha(color2) * ratio);
+        float r = (Color.red(color1) * inverseRatio) + (Color.red(color2) * ratio);
+        float g = (Color.green(color1) * inverseRatio) + (Color.green(color2) * ratio);
+        float b = (Color.blue(color1) * inverseRatio) + (Color.blue(color2) * ratio);
+        return Color.argb((int) a, (int) r, (int) g, (int) b);
+    }
+
+    public float getExpansionFraction() {
+        return mExpandedFraction;
+    }
+
     /**
      * Set the value indicating the current scroll value. This decides how much of the
      * background will be displayed, as well as the title metrics/positioning.
@@ -110,10 +149,6 @@ public final class CollapsingTextHelper {
             mExpandedFraction = fraction;
             calculateCurrentOffsets();
         }
-    }
-
-    public float getExpansionFraction() {
-        return mExpandedFraction;
     }
 
     public void draw(Canvas canvas) {
@@ -154,6 +189,10 @@ public final class CollapsingTextHelper {
         canvas.restoreToCount(saveCount);
     }
 
+    public CharSequence getText() {
+        return mText;
+    }
+
     /**
      * Set the title to display
      *
@@ -166,10 +205,6 @@ public final class CollapsingTextHelper {
             clearTexture();
             recalculate();
         }
-    }
-
-    public CharSequence getText() {
-        return mText;
     }
 
     public void setTextSizeInterpolator(Interpolator interpolator) {
@@ -317,18 +352,6 @@ public final class CollapsingTextHelper {
 
     public float getCurrentTextSize() {
         return mCurrentTextSize;
-    }
-
-    private static float lerp(float startValue, float endValue, float fraction,
-                              Interpolator interpolator) {
-        if (interpolator != null) {
-            fraction = interpolator.getInterpolation(fraction);
-        }
-        return AnimUtils.lerp(startValue, endValue, fraction);
-    }
-
-    private static boolean rectEquals(Rect r, int left, int top, int right, int bottom) {
-        return !(r.left != left || r.top != top || r.right != right || r.bottom != bottom);
     }
 
     private void onBoundsChanged() {
@@ -523,28 +546,5 @@ public final class CollapsingTextHelper {
             mExpandedTitleTexture.recycle();
             mExpandedTitleTexture = null;
         }
-    }
-
-    /**
-     * Returns true if {@code value} is 'close' to it's closest decimal value. Close is currently
-     * defined as it's difference being < 0.001.
-     */
-    private static boolean isClose(float value, float targetValue) {
-        return Math.abs(value - targetValue) < 0.001f;
-    }
-
-    /**
-     * Blend {@code color1} and {@code color2} using the given ratio.
-     *
-     * @param ratio of which to blend. 0.0 will return {@code color1}, 0.5 will give an even blend,
-     *              1.0 will return {@code color2}.
-     */
-    private static int blendColors(int color1, int color2, float ratio) {
-        final float inverseRatio = 1f - ratio;
-        float a = (Color.alpha(color1) * inverseRatio) + (Color.alpha(color2) * ratio);
-        float r = (Color.red(color1) * inverseRatio) + (Color.red(color2) * ratio);
-        float g = (Color.green(color1) * inverseRatio) + (Color.green(color2) * ratio);
-        float b = (Color.blue(color1) * inverseRatio) + (Color.blue(color2) * ratio);
-        return Color.argb((int) a, (int) r, (int) g, (int) b);
     }
 }

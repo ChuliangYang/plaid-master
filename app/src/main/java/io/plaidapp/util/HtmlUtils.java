@@ -36,7 +36,8 @@ import in.uncod.android.bypass.style.TouchableUrlSpan;
  */
 public class HtmlUtils {
 
-    private HtmlUtils() { }
+    private HtmlUtils() {
+    }
 
     /**
      * Work around some 'features' of TextView and URLSpans. i.e. vanilla URLSpans do not react to

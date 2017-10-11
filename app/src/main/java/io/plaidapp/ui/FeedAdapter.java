@@ -97,8 +97,8 @@ import static io.plaidapp.util.AnimUtils.getFastOutSlowInInterpolator;
  * Adapter for displaying a gridImage of {@link PlaidItem}s.
  */
 public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-                         implements DataLoadingSubject.DataLoadingCallbacks,
-                                    ListPreloader.PreloadModelProvider<Shot> {
+        implements DataLoadingSubject.DataLoadingCallbacks,
+        ListPreloader.PreloadModelProvider<Shot> {
 
     static final int REQUEST_CODE_VIEW_SHOT = 5407;
 
@@ -112,12 +112,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private final LayoutInflater layoutInflater;
     private final PlaidItemSorting.PlaidItemComparator comparator;
     private final boolean pocketIsInstalled;
-    private final @Nullable DataLoadingSubject dataLoading;
+    private final @Nullable
+    DataLoadingSubject dataLoading;
     private final int columns;
     private final ColorDrawable[] shotLoadingPlaceholders;
     private final ViewPreloadSizeProvider<Shot> shotPreloadSizeProvider;
 
-    private final @ColorInt int initialGifBadgeColor;
+    private final @ColorInt
+    int initialGifBadgeColor;
     private List<PlaidItem> items;
     private boolean showLoadingMore = false;
     private PlaidItemSorting.NaturalOrderWeigher naturalOrderWeigher;
@@ -153,13 +155,42 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 shotLoadingPlaceholders[i] = new ColorDrawable(placeholderColors[i]);
             }
         } else {
-            shotLoadingPlaceholders = new ColorDrawable[] { new ColorDrawable(Color.DKGRAY) };
+            shotLoadingPlaceholders = new ColorDrawable[]{new ColorDrawable(Color.DKGRAY)};
         }
         final int initialGifBadgeColorId =
                 a.getResourceId(R.styleable.DribbbleFeed_initialBadgeColor, 0);
         initialGifBadgeColor = initialGifBadgeColorId != 0 ?
                 ContextCompat.getColor(host, initialGifBadgeColorId) : 0x40ffffff;
         a.recycle();
+    }
+
+    static SharedElementCallback createSharedElementReenterCallback(
+            @NonNull Context context) {
+        final String shotTransitionName = context.getString(R.string.transition_shot);
+        final String shotBackgroundTransitionName =
+                context.getString(R.string.transition_shot_background);
+        return new SharedElementCallback() {
+
+            /**
+             * We're performing a slightly unusual shared element transition i.e. from one view
+             * (image in the gridImage) to two views (the image & also the background of the details
+             * view, to produce the expand effect). After changing orientation, the transition
+             * system seems unable to map both shared elements (only seems to map the shot, not
+             * the background) so in this situation we manually map the background to the
+             * same view.
+             */
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                if (sharedElements.size() != names.size()) {
+                    // couldn't map all shared elements
+                    final View sharedShot = sharedElements.get(shotTransitionName);
+                    if (sharedShot != null) {
+                        // has shot so add shot background, mapped to same view
+                        sharedElements.put(shotBackgroundTransitionName, sharedShot);
+                    }
+                }
+            }
+        };
     }
 
     @Override
@@ -223,7 +254,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                 Uri.parse(story.url));
                     }
                 }
-            );
+        );
         holder.comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View commentsView) {
@@ -677,35 +708,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyItemRemoved(loadingPos);
     }
 
-    static SharedElementCallback createSharedElementReenterCallback(
-            @NonNull Context context) {
-        final String shotTransitionName = context.getString(R.string.transition_shot);
-        final String shotBackgroundTransitionName =
-                context.getString(R.string.transition_shot_background);
-        return new SharedElementCallback() {
-
-            /**
-             * We're performing a slightly unusual shared element transition i.e. from one view
-             * (image in the gridImage) to two views (the image & also the background of the details
-             * view, to produce the expand effect). After changing orientation, the transition
-             * system seems unable to map both shared elements (only seems to map the shot, not
-             * the background) so in this situation we manually map the background to the
-             * same view.
-             */
-            @Override
-            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                if (sharedElements.size() != names.size()) {
-                    // couldn't map all shared elements
-                    final View sharedShot = sharedElements.get(shotTransitionName);
-                    if (sharedShot != null) {
-                        // has shot so add shot background, mapped to same view
-                        sharedElements.put(shotBackgroundTransitionName, sharedShot);
-                    }
-                }
-            }
-        };
-    }
-
     @Override
     public List<Shot> getPreloadItems(int position) {
         PlaidItem item = getItem(position);
@@ -733,9 +735,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     static class DesignerNewsStoryHolder extends RecyclerView.ViewHolder implements Divided {
 
-        @BindView(R.id.story_title) BaselineGridTextView title;
-        @BindView(R.id.story_comments) TextView comments;
-        @BindView(R.id.pocket) ImageButton pocket;
+        @BindView(R.id.story_title)
+        BaselineGridTextView title;
+        @BindView(R.id.story_comments)
+        TextView comments;
+        @BindView(R.id.pocket)
+        ImageButton pocket;
 
         DesignerNewsStoryHolder(View itemView, boolean pocketIsInstalled) {
             super(itemView);
@@ -746,9 +751,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     static class ProductHuntStoryHolder extends RecyclerView.ViewHolder implements Divided {
 
-        @BindView(R.id.hunt_title) TextView title;
-        @BindView(R.id.tagline) TextView tagline;
-        @BindView(R.id.story_comments) TextView comments;
+        @BindView(R.id.hunt_title)
+        TextView title;
+        @BindView(R.id.tagline)
+        TextView tagline;
+        @BindView(R.id.story_comments)
+        TextView comments;
 
         ProductHuntStoryHolder(View itemView) {
             super(itemView);

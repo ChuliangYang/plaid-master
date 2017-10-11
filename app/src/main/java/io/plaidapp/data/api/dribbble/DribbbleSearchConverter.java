@@ -45,38 +45,12 @@ import retrofit2.Retrofit;
  */
 public class DribbbleSearchConverter implements Converter<ResponseBody, List<Shot>> {
 
-    /** Factory for creating converter. We only care about decoding responses. **/
-    public static final class Factory extends Converter.Factory {
-
-        @Override
-        public Converter<ResponseBody, ?> responseBodyConverter(Type type,
-                                                                Annotation[] annotations,
-                                                                Retrofit retrofit) {
-            return INSTANCE;
-        }
-
-    }
-
-    private DribbbleSearchConverter() { }
     static final DribbbleSearchConverter INSTANCE = new DribbbleSearchConverter();
-
     private static final String HOST = "https://dribbble.com";
     private static final Pattern PATTERN_PLAYER_ID =
             Pattern.compile("users/(\\d+?)/", Pattern.DOTALL);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy");
-
-    @Override
-    public List<Shot> convert(ResponseBody value) throws IOException {
-        final Elements shotElements =
-                Jsoup.parse(value.string(), HOST).select("li[id^=screenshot]");
-        final List<Shot> shots = new ArrayList<>(shotElements.size());
-        for (Element element : shotElements) {
-            final Shot shot = parseShot(element, DATE_FORMAT);
-            if (shot != null) {
-                shots.add(shot);
-            }
-        }
-        return shots;
+    private DribbbleSearchConverter() {
     }
 
     private static Shot parseShot(Element element, SimpleDateFormat dateFormat) {
@@ -93,7 +67,8 @@ public class DribbbleSearchConverter implements Converter<ResponseBody, List<Sho
         Date createdAt = null;
         try {
             createdAt = dateFormat.parse(descriptionBlock.select("em.timestamp").first().text());
-        } catch (ParseException e) { }
+        } catch (ParseException e) {
+        }
 
         return new Shot.Builder()
                 .setId(Long.parseLong(element.id().replace("screenshot-", "")))
@@ -135,6 +110,34 @@ public class DribbbleSearchConverter implements Converter<ResponseBody, List<Sho
                 .setAvatarUrl(avatarUrl)
                 .setPro(element.select("span.badge-pro").size() > 0)
                 .build();
+    }
+
+    @Override
+    public List<Shot> convert(ResponseBody value) throws IOException {
+        final Elements shotElements =
+                Jsoup.parse(value.string(), HOST).select("li[id^=screenshot]");
+        final List<Shot> shots = new ArrayList<>(shotElements.size());
+        for (Element element : shotElements) {
+            final Shot shot = parseShot(element, DATE_FORMAT);
+            if (shot != null) {
+                shots.add(shot);
+            }
+        }
+        return shots;
+    }
+
+    /**
+     * Factory for creating converter. We only care about decoding responses.
+     **/
+    public static final class Factory extends Converter.Factory {
+
+        @Override
+        public Converter<ResponseBody, ?> responseBodyConverter(Type type,
+                                                                Annotation[] annotations,
+                                                                Retrofit retrofit) {
+            return INSTANCE;
+        }
+
     }
 
 }

@@ -59,11 +59,16 @@ public class DribbbleLogin extends Activity {
 
     boolean isDismissing = false;
     boolean isLoginFailed = false;
-    @BindView(R.id.container) ViewGroup container;
-    @BindView(R.id.login_message) TextView message;
-    @BindView(R.id.login) Button login;
-    @BindView(R.id.loading) ProgressBar loading;
-    @BindView(R.id.login_failed_message) TextView loginFailed;
+    @BindView(R.id.container)
+    ViewGroup container;
+    @BindView(R.id.login_message)
+    TextView message;
+    @BindView(R.id.login)
+    Button login;
+    @BindView(R.id.loading)
+    ProgressBar loading;
+    @BindView(R.id.login_failed_message)
+    TextView loginFailed;
     DribbblePrefs dribbblePrefs;
 
     @Override
@@ -149,7 +154,9 @@ public class DribbbleLogin extends Activity {
                 confirmLogin.show();
             }
 
-            @Override public void onFailure(Call<User> call, Throwable t) { }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+            }
         });
     }
 

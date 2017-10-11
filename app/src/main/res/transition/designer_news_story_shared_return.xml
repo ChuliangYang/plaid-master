@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<transitionSet
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:transitionOrdering="together">
 
@@ -31,8 +29,8 @@
         <transition
             class="io.plaidapp.ui.transitions.LiftOff"
             android:duration="250"
-            app:initialElevation="-4dp"
-            app:finalElevation="-2dp" />
+            app:finalElevation="-2dp"
+            app:initialElevation="-4dp" />
     </transitionSet>
 
     <transitionSet>
@@ -43,8 +41,8 @@
             class="io.plaidapp.ui.transitions.StretchyChangeBounds"
             android:color="?android:colorPrimary"
             app:leadingDuration="250"
-            app:minTrailingDuration="250"
-            app:maxTrailingDuration="250" />
+            app:maxTrailingDuration="250"
+            app:minTrailingDuration="250" />
         <transition
             class="io.plaidapp.ui.transitions.LiftOff"
             android:duration="300"
@@ -57,18 +55,18 @@
         </targets>
         <transition
             class="io.plaidapp.ui.transitions.ReflowText"
-            app:velocity="1000dp"
-            app:minDuration="230"
+            app:freezeFrame="true"
             app:maxDuration="230"
+            app:minDuration="230"
             app:staggerDelay="10"
-            app:freezeFrame="true">
+            app:velocity="1000dp">
             <pathMotion class="io.plaidapp.ui.transitions.GravityArcMotion" />
         </transition>
         <transition
             class="io.plaidapp.ui.transitions.LiftOff"
-            app:initialElevation="@dimen/touched_app_bar"
+            android:duration="250"
             app:finalElevation="@dimen/z_card"
-            android:duration="250" />
+            app:initialElevation="@dimen/touched_app_bar" />
     </transitionSet>
 
 </transitionSet>

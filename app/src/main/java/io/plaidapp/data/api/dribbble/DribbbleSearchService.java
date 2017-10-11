@@ -28,7 +28,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
- *  Fake-API for searching dribbble
+ * Fake-API for searching dribbble
  */
 public interface DribbbleSearchService {
 
@@ -44,13 +44,16 @@ public interface DribbbleSearchService {
                             @Query("s") @SortOrder String sort);
 
 
-    /** magic constants **/
+    /**
+     * magic constants
+     **/
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
             SORT_POPULAR,
             SORT_RECENT
     })
-    @interface SortOrder { }
+    @interface SortOrder {
+    }
 
 }

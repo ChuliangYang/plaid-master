@@ -59,6 +59,18 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
         dribbblePrefs = DribbblePrefs.get(context);
     }
 
+    protected static void setPage(List<? extends PlaidItem> items, int page) {
+        for (PlaidItem item : items) {
+            item.page = page;
+        }
+    }
+
+    protected static void setDataSource(List<? extends PlaidItem> items, String dataSource) {
+        for (PlaidItem item : items) {
+            item.dataSource = dataSource;
+        }
+    }
+
     public abstract void onDataLoaded(T data);
 
     public abstract void cancelLoading();
@@ -123,18 +135,6 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
 
     protected void resetLoadingCount() {
         loadingCount.set(0);
-    }
-
-    protected static void setPage(List<? extends PlaidItem> items, int page) {
-        for (PlaidItem item : items) {
-            item.page = page;
-        }
-    }
-
-    protected static void setDataSource(List<? extends PlaidItem> items, String dataSource) {
-        for (PlaidItem item : items) {
-            item.dataSource = dataSource;
-        }
     }
 
     protected void dispatchLoadingStartedCallbacks() {

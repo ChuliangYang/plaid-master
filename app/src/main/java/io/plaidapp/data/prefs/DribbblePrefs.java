@@ -56,7 +56,7 @@ public class DribbblePrefs {
     private static final String KEY_USER_AVATAR = "KEY_USER_AVATAR";
     private static final String KEY_USER_TYPE = "KEY_USER_TYPE";
     private static final List<String> CREATIVE_TYPES
-            = Arrays.asList(new String[] { "Player", "Team" });
+            = Arrays.asList(new String[]{"Player", "Team"});
 
     private static volatile DribbblePrefs singleton;
     private final SharedPreferences prefs;
@@ -70,15 +70,6 @@ public class DribbblePrefs {
     private String userType;
     private DribbbleService api;
     private List<DribbbleLoginStatusListener> loginStatusListeners;
-
-    public static DribbblePrefs get(Context context) {
-        if (singleton == null) {
-            synchronized (DribbblePrefs.class) {
-                singleton = new DribbblePrefs(context);
-            }
-        }
-        return singleton;
-    }
 
     private DribbblePrefs(Context context) {
         prefs = context.getApplicationContext().getSharedPreferences(DRIBBBLE_PREF, Context
@@ -94,23 +85,17 @@ public class DribbblePrefs {
         }
     }
 
-    public interface DribbbleLoginStatusListener {
-        void onDribbbleLogin();
-        void onDribbbleLogout();
+    public static DribbblePrefs get(Context context) {
+        if (singleton == null) {
+            synchronized (DribbblePrefs.class) {
+                singleton = new DribbblePrefs(context);
+            }
+        }
+        return singleton;
     }
 
     public boolean isLoggedIn() {
         return isLoggedIn;
-    }
-
-    public void setAccessToken(String accessToken) {
-        if (!TextUtils.isEmpty(accessToken)) {
-            this.accessToken = accessToken;
-            isLoggedIn = true;
-            prefs.edit().putString(KEY_ACCESS_TOKEN, accessToken).apply();
-            createApi();
-            dispatchLoginEvent();
-        }
     }
 
     public void setLoggedInUser(User user) {
@@ -236,6 +221,22 @@ public class DribbblePrefs {
     private String getAccessToken() {
         return !TextUtils.isEmpty(accessToken) ? accessToken
                 : BuildConfig.DRIBBBLE_CLIENT_ACCESS_TOKEN;
+    }
+
+    public void setAccessToken(String accessToken) {
+        if (!TextUtils.isEmpty(accessToken)) {
+            this.accessToken = accessToken;
+            isLoggedIn = true;
+            prefs.edit().putString(KEY_ACCESS_TOKEN, accessToken).apply();
+            createApi();
+            dispatchLoginEvent();
+        }
+    }
+
+    public interface DribbbleLoginStatusListener {
+        void onDribbbleLogin();
+
+        void onDribbbleLogout();
     }
 
 }

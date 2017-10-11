@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,20 +17,19 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- enabled to disabled, fade out -->
-    <item
-        android:state_enabled="false">
+    <item android:state_enabled="false">
         <objectAnimator
+            android:duration="@android:integer/config_shortAnimTime"
             android:propertyName="alpha"
-            android:valueTo="0.38"
-            android:duration="@android:integer/config_shortAnimTime" />
+            android:valueTo="0.38" />
     </item>
 
     <!-- disabled to enabled, fade back in -->
     <item>
         <objectAnimator
+            android:duration="@android:integer/config_shortAnimTime"
             android:propertyName="alpha"
-            android:valueTo="1"
-            android:duration="@android:integer/config_shortAnimTime" />
+            android:valueTo="1" />
     </item>
 
 </selector>

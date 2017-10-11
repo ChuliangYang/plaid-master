@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2016 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +14,26 @@
   limitations under the License.
   -->
 
-<set
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<set xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:interpolator/fast_out_slow_in">
 
     <objectAnimator
+        android:duration="550"
         android:propertyName="translateX"
-        android:valueTo="-8"
-        android:duration="550" />
+        android:valueTo="-8" />
 
     <objectAnimator
+        android:duration="300"
         android:propertyName="translateX"
+        android:startOffset="550"
         android:valueFrom="16"
-        android:valueTo="0"
-        android:startOffset="550"
-        android:duration="300" />
+        android:valueTo="0" />
 
     <objectAnimator
+        android:duration="250"
         android:propertyName="translateY"
-        android:valueFrom="-4"
-        android:valueTo="0"
         android:startOffset="550"
-        android:duration="250" />
+        android:valueFrom="-4"
+        android:valueTo="0" />
 
 </set>

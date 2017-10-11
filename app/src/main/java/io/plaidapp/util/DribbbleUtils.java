@@ -13,7 +13,8 @@ import okhttp3.HttpUrl;
 
 public class DribbbleUtils {
 
-    private DribbbleUtils() { }
+    private DribbbleUtils() {
+    }
 
     /**
      * An extension to {@link HtmlUtils#parseHtml(String, ColorStateList, int)} which adds Dribbble

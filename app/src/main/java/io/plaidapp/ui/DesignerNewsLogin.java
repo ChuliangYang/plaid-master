@@ -82,19 +82,44 @@ public class DesignerNewsLogin extends Activity {
     private static final int PERMISSIONS_REQUEST_GET_ACCOUNTS = 0;
 
     boolean isDismissing = false;
-    @BindView(R.id.container) ViewGroup container;
-    @BindView(R.id.dialog_title) TextView title;
-    @BindView(R.id.username_float_label) TextInputLayout usernameLabel;
-    @BindView(R.id.username) AutoCompleteTextView username;
-    @BindView(R.id.permission_primer) CheckBox permissionPrimer;
-    @BindView(R.id.password_float_label) TextInputLayout passwordLabel;
-    @BindView(R.id.password) EditText password;
-    @BindView(R.id.actions_container) FrameLayout actionsContainer;
-    @BindView(R.id.signup) Button signup;
-    @BindView(R.id.login) Button login;
-    @BindView(R.id.loading) ProgressBar loading;
+    @BindView(R.id.container)
+    ViewGroup container;
+    @BindView(R.id.dialog_title)
+    TextView title;
+    @BindView(R.id.username_float_label)
+    TextInputLayout usernameLabel;
+    @BindView(R.id.username)
+    AutoCompleteTextView username;
+    @BindView(R.id.permission_primer)
+    CheckBox permissionPrimer;
+    @BindView(R.id.password_float_label)
+    TextInputLayout passwordLabel;
+    @BindView(R.id.password)
+    EditText password;
+    @BindView(R.id.actions_container)
+    FrameLayout actionsContainer;
+    @BindView(R.id.signup)
+    Button signup;
+    @BindView(R.id.login)
+    Button login;
+    @BindView(R.id.loading)
+    ProgressBar loading;
     DesignerNewsPrefs designerNewsPrefs;
     private boolean shouldPromptForPermission = false;
+    private TextWatcher loginFieldWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            login.setEnabled(isLoginValid());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +160,8 @@ public class DesignerNewsLogin extends Activity {
         designerNewsPrefs = DesignerNewsPrefs.get(this);
     }
 
-    @Override @SuppressLint("NewApi")
+    @Override
+    @SuppressLint("NewApi")
     public void onEnterAnimationComplete() {
         /* Postpone some of the setup steps so that we can run it after the enter transition (if
         there is one). Otherwise we may show the permissions dialog or account dropdown during the
@@ -159,7 +185,8 @@ public class DesignerNewsLogin extends Activity {
         dismiss(null);
     }
 
-    @Override @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -255,17 +282,6 @@ public class DesignerNewsLogin extends Activity {
         password.requestFocus();
     }
 
-    private TextWatcher loginFieldWatcher = new TextWatcher() {
-        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-        @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            login.setEnabled(isLoginValid());
-        }
-    };
-
     private void showLoading() {
         TransitionManager.beginDelayedTransition(container);
         title.setVisibility(View.GONE);
@@ -351,7 +367,7 @@ public class DesignerNewsLogin extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    requestPermissions(new String[]{ Manifest.permission.GET_ACCOUNTS },
+                    requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS},
                             PERMISSIONS_REQUEST_GET_ACCOUNTS);
                 }
             }

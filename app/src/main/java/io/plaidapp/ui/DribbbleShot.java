@@ -112,11 +112,16 @@ public class DribbbleShot extends Activity {
     private static final int RC_LOGIN_COMMENT = 1;
     private static final float SCRIM_ADJUSTMENT = 0.075f;
 
-    @BindView(R.id.draggable_frame) ElasticDragDismissFrameLayout draggableFrame;
-    @BindView(R.id.back) ImageButton back;
-    @BindView(R.id.shot) ParallaxScrimageView imageView;
-    @BindView(R.id.dribbble_comments) RecyclerView commentsList;
-    @BindView(R.id.fab_heart) FABToggle fab;
+    @BindView(R.id.draggable_frame)
+    ElasticDragDismissFrameLayout draggableFrame;
+    @BindView(R.id.back)
+    ImageButton back;
+    @BindView(R.id.shot)
+    ParallaxScrimageView imageView;
+    @BindView(R.id.dribbble_comments)
+    RecyclerView commentsList;
+    @BindView(R.id.fab_heart)
+    FABToggle fab;
     View shotDescription;
     View shotSpacer;
     Button likeCount;
@@ -125,14 +130,6 @@ public class DribbbleShot extends Activity {
     ImageView playerAvatar;
     EditText enterComment;
     ImageButton postComment;
-    private View title;
-    private View description;
-    private TextView playerName;
-    private TextView shotTimeAgo;
-    private View commentFooter;
-    private ImageView userAvatar;
-    private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
-
     Shot shot;
     int fabOffset;
     DribbblePrefs dribbblePrefs;
@@ -140,8 +137,187 @@ public class DribbbleShot extends Activity {
     boolean allowComment;
     CommentsAdapter adapter;
     CommentAnimator commentAnimator;
-    @BindDimen(R.dimen.large_avatar_size) int largeAvatarSize;
-    @BindDimen(R.dimen.z_card) int cardElevation;
+    @BindDimen(R.dimen.large_avatar_size)
+    int largeAvatarSize;
+    @BindDimen(R.dimen.z_card)
+    int cardElevation;
+    /**
+     * We run a transition to expand/collapse comments. Scrolling the RecyclerView while this is
+     * running causes issues, so we consume touch events while the transition runs.
+     */
+    View.OnTouchListener touchEater = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            return true;
+        }
+    };
+    private View title;
+    private View description;
+    private TextView playerName;
+    private TextView shotTimeAgo;
+    private View commentFooter;
+    private ImageView userAvatar;
+    private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+    private View.OnClickListener shotClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            openLink(shot.url);
+        }
+    };
+    private RequestListener<Drawable> shotLoadListener = new RequestListener<Drawable>() {
+        @Override
+        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target,
+                                       DataSource dataSource, boolean isFirstResource) {
+            final Bitmap bitmap = GlideUtils.getBitmap(resource);
+            if (bitmap == null) return false;
+            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    24, DribbbleShot.this.getResources().getDisplayMetrics());
+            Palette.from(bitmap)
+                    .maximumColorCount(3)
+                    .clearFilters() /* by default palette ignore certain hues
+                        (e.g. pure black/white) but we don't want this. */
+                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
+                        https://code.google.com/p/android/issues/detail?id=191013 */
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            boolean isDark;
+                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
+                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
+                            } else {
+                                isDark = lightness == ColorUtils.IS_DARK;
+                            }
+
+                            if (!isDark) { // make back icon dark on light images
+                                back.setColorFilter(ContextCompat.getColor(
+                                        DribbbleShot.this, R.color.dark_icon));
+                            }
+
+                            // color the status bar. Set a complementary dark color on L,
+                            // light or dark color on M (with matching status bar icons)
+                            int statusBarColor = getWindow().getStatusBarColor();
+                            final Palette.Swatch topColor =
+                                    ColorUtils.getMostPopulousSwatch(palette);
+                            if (topColor != null &&
+                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                        isDark, SCRIM_ADJUSTMENT);
+                                // set a light status bar on M+
+                                if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    ViewUtils.setLightStatusBar(imageView);
+                                }
+                            }
+
+                            if (statusBarColor != getWindow().getStatusBarColor()) {
+                                imageView.setScrimColor(statusBarColor);
+                                ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                        getWindow().getStatusBarColor(), statusBarColor);
+                                statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                        .AnimatorUpdateListener() {
+                                    @Override
+                                    public void onAnimationUpdate(ValueAnimator animation) {
+                                        getWindow().setStatusBarColor(
+                                                (int) animation.getAnimatedValue());
+                                    }
+                                });
+                                statusBarColorAnim.setDuration(1000L);
+                                statusBarColorAnim.setInterpolator(
+                                        getFastOutSlowInInterpolator(DribbbleShot.this));
+                                statusBarColorAnim.start();
+                            }
+                        }
+                    });
+
+            Palette.from(bitmap)
+                    .clearFilters()
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            // color the ripple on the image spacer (default is grey)
+                            shotSpacer.setBackground(
+                                    ViewUtils.createRipple(palette, 0.25f, 0.5f,
+                                            ContextCompat.getColor(DribbbleShot.this, R.color.mid_grey),
+                                            true));
+                            // slightly more opaque ripple on the pinned image to compensate
+                            // for the scrim
+                            imageView.setForeground(
+                                    ViewUtils.createRipple(palette, 0.3f, 0.6f,
+                                            ContextCompat.getColor(DribbbleShot.this, R.color.mid_grey),
+                                            true));
+                        }
+                    });
+
+            // TODO should keep the background if the image contains transparency?!
+            imageView.setBackground(null);
+            return false;
+        }
+
+        @Override
+        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                    Target<Drawable> target, boolean isFirstResource) {
+            return false;
+        }
+    };
+    private View.OnFocusChangeListener enterCommentFocus = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View view, boolean hasFocus) {
+            // kick off an anim (via animated state list) on the post button. see
+            // @drawable/ic_add_comment
+            postComment.setActivated(hasFocus);
+
+            // prevent content hovering over image when not pinned.
+            if (hasFocus) {
+                imageView.bringToFront();
+                imageView.setOffset(-imageView.getHeight());
+                imageView.setImmediatePin(true);
+            }
+        }
+    };
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        int scrollY = 0;
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            final int scrollY1 = shotDescription.getTop();
+            scrollY -= dy;
+            Log.e(TAG, "scrollY1:" + scrollY1 + "    scrollY:" + scrollY);
+//            final int scrollY = dy;
+            imageView.setOffset(scrollY);
+            fab.setOffset(fabOffset + scrollY);
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            // as we animate the main image's elevation change when it 'pins' at it's min height
+            // a fling can cause the title to go over the image before the animation has a chance to
+            // run. In this case we short circuit the animation and just jump to state.
+            imageView.setImmediatePin(newState == RecyclerView.SCROLL_STATE_SETTLING);
+        }
+    };
+    private RecyclerView.OnFlingListener flingListener = new RecyclerView.OnFlingListener() {
+        @Override
+        public boolean onFling(int velocityX, int velocityY) {
+            imageView.setImmediatePin(true);
+            return false;
+        }
+    };
+    private View.OnClickListener fabClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (dribbblePrefs.isLoggedIn()) {
+                fab.toggle();
+                doLike();
+            } else {
+                final Intent login = new Intent(DribbbleShot.this, DribbbleLogin.class);
+                FabTransform.addExtras(login, ContextCompat.getColor(DribbbleShot.this, R
+                        .color.dribbble), R.drawable.ic_heart_empty_56dp);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                        (DribbbleShot.this, fab, getString(R.string.transition_dribbble_login));
+                startActivityForResult(login, RC_LOGIN_LIKE, options.toBundle());
+            }
+        }
+    };
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -203,7 +379,7 @@ public class DribbbleShot extends Activity {
                             reportUrlError();
                         }
                     });
-                } catch (NumberFormatException|StringIndexOutOfBoundsException ex) {
+                } catch (NumberFormatException | StringIndexOutOfBoundsException ex) {
                     reportUrlError();
                 }
             } else {
@@ -257,7 +433,8 @@ public class DribbbleShot extends Activity {
         return true;
     }
 
-    @Override @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    @TargetApi(Build.VERSION_CODES.M)
     public void onProvideAssistContent(AssistContent outContent) {
         outContent.setWebUri(Uri.parse(shot.url));
     }
@@ -310,14 +487,14 @@ public class DribbbleShot extends Activity {
         if (postponeEnterTransition) postponeEnterTransition();
         imageView.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                imageView.getViewTreeObserver().removeOnPreDrawListener(this);
-                calculateFabPosition();
-                if (postponeEnterTransition) startPostponedEnterTransition();
-                return true;
-            }
-        });
+                    @Override
+                    public boolean onPreDraw() {
+                        imageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        calculateFabPosition();
+                        if (postponeEnterTransition) startPostponedEnterTransition();
+                        return true;
+                    }
+                });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ((FabOverlapTextView) title).setText(shot.title);
@@ -435,191 +612,15 @@ public class DribbbleShot extends Activity {
         }, 3000L);
     }
 
-    private View.OnClickListener shotClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            openLink(shot.url);
-        }
-    };
-
-    /**
-     * We run a transition to expand/collapse comments. Scrolling the RecyclerView while this is
-     * running causes issues, so we consume touch events while the transition runs.
-     */
-    View.OnTouchListener touchEater = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            return true;
-        }
-    };
-
     void openLink(String url) {
         CustomTabActivityHelper.openCustomTab(
                 DribbbleShot.this,
                 new CustomTabsIntent.Builder()
-                    .setToolbarColor(ContextCompat.getColor(DribbbleShot.this, R.color.dribbble))
-                    .addDefaultShareMenuItem()
-                    .build(),
+                        .setToolbarColor(ContextCompat.getColor(DribbbleShot.this, R.color.dribbble))
+                        .addDefaultShareMenuItem()
+                        .build(),
                 Uri.parse(url));
     }
-
-    private RequestListener<Drawable> shotLoadListener = new RequestListener<Drawable>() {
-        @Override
-        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target,
-                                       DataSource dataSource, boolean isFirstResource) {
-            final Bitmap bitmap = GlideUtils.getBitmap(resource);
-            if (bitmap == null) return false;
-            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    24, DribbbleShot.this.getResources().getDisplayMetrics());
-            Palette.from(bitmap)
-                    .maximumColorCount(3)
-                    .clearFilters() /* by default palette ignore certain hues
-                        (e.g. pure black/white) but we don't want this. */
-                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
-                        https://code.google.com/p/android/issues/detail?id=191013 */
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            boolean isDark;
-                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
-                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
-                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
-                            } else {
-                                isDark = lightness == ColorUtils.IS_DARK;
-                            }
-
-                            if (!isDark) { // make back icon dark on light images
-                                back.setColorFilter(ContextCompat.getColor(
-                                        DribbbleShot.this, R.color.dark_icon));
-                            }
-
-                            // color the status bar. Set a complementary dark color on L,
-                            // light or dark color on M (with matching status bar icons)
-                            int statusBarColor = getWindow().getStatusBarColor();
-                            final Palette.Swatch topColor =
-                                    ColorUtils.getMostPopulousSwatch(palette);
-                            if (topColor != null &&
-                                    (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-                                statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
-                                        isDark, SCRIM_ADJUSTMENT);
-                                // set a light status bar on M+
-                                if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    ViewUtils.setLightStatusBar(imageView);
-                                }
-                            }
-
-                            if (statusBarColor != getWindow().getStatusBarColor()) {
-                                imageView.setScrimColor(statusBarColor);
-                                ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
-                                        getWindow().getStatusBarColor(), statusBarColor);
-                                statusBarColorAnim.addUpdateListener(new ValueAnimator
-                                        .AnimatorUpdateListener() {
-                                    @Override
-                                    public void onAnimationUpdate(ValueAnimator animation) {
-                                        getWindow().setStatusBarColor(
-                                                (int) animation.getAnimatedValue());
-                                    }
-                                });
-                                statusBarColorAnim.setDuration(1000L);
-                                statusBarColorAnim.setInterpolator(
-                                        getFastOutSlowInInterpolator(DribbbleShot.this));
-                                statusBarColorAnim.start();
-                            }
-                        }
-                    });
-
-            Palette.from(bitmap)
-                    .clearFilters()
-                    .generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            // color the ripple on the image spacer (default is grey)
-                            shotSpacer.setBackground(
-                                    ViewUtils.createRipple(palette, 0.25f, 0.5f,
-                                    ContextCompat.getColor(DribbbleShot.this, R.color.mid_grey),
-                                    true));
-                            // slightly more opaque ripple on the pinned image to compensate
-                            // for the scrim
-                            imageView.setForeground(
-                                    ViewUtils.createRipple(palette, 0.3f, 0.6f,
-                                    ContextCompat.getColor(DribbbleShot.this, R.color.mid_grey),
-                                    true));
-                        }
-                    });
-
-            // TODO should keep the background if the image contains transparency?!
-            imageView.setBackground(null);
-            return false;
-        }
-
-        @Override
-        public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                                    Target<Drawable> target, boolean isFirstResource) {
-            return false;
-        }
-    };
-
-    private View.OnFocusChangeListener enterCommentFocus = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View view, boolean hasFocus) {
-            // kick off an anim (via animated state list) on the post button. see
-            // @drawable/ic_add_comment
-            postComment.setActivated(hasFocus);
-
-            // prevent content hovering over image when not pinned.
-            if(hasFocus) {
-                imageView.bringToFront();
-                imageView.setOffset(-imageView.getHeight());
-                imageView.setImmediatePin(true);
-            }
-        }
-    };
-
-    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        int scrollY=0;
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            final int scrollY1 = shotDescription.getTop();
-            scrollY-=dy;
-            Log.e(TAG, "scrollY1:"+scrollY1+"    scrollY:"+scrollY);
-//            final int scrollY = dy;
-            imageView.setOffset(scrollY);
-            fab.setOffset(fabOffset + scrollY);
-        }
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            // as we animate the main image's elevation change when it 'pins' at it's min height
-            // a fling can cause the title to go over the image before the animation has a chance to
-            // run. In this case we short circuit the animation and just jump to state.
-            imageView.setImmediatePin(newState == RecyclerView.SCROLL_STATE_SETTLING);
-        }
-    };
-
-    private RecyclerView.OnFlingListener flingListener = new RecyclerView.OnFlingListener() {
-        @Override
-        public boolean onFling(int velocityX, int velocityY) {
-            imageView.setImmediatePin(true);
-            return false;
-        }
-    };
-
-    private View.OnClickListener fabClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (dribbblePrefs.isLoggedIn()) {
-                fab.toggle();
-                doLike();
-            } else {
-                final Intent login = new Intent(DribbbleShot.this, DribbbleLogin.class);
-                FabTransform.addExtras(login, ContextCompat.getColor(DribbbleShot.this, R
-                        .color.dribbble), R.drawable.ic_heart_empty_56dp);
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
-                        (DribbbleShot.this, fab, getString(R.string.transition_dribbble_login));
-                startActivityForResult(login, RC_LOGIN_LIKE, options.toBundle());
-            }
-        }
-    };
 
     void loadComments() {
         final Call<List<Comment>> commentsCall =
@@ -633,7 +634,9 @@ public class DribbbleShot extends Activity {
                 }
             }
 
-            @Override public void onFailure(Call<List<Comment>> call, Throwable t) { }
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+            }
         });
     }
 
@@ -737,21 +740,80 @@ public class DribbbleShot extends Activity {
         }
     }
 
+    static class SimpleViewHolder extends RecyclerView.ViewHolder {
+
+        SimpleViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    static class CommentViewHolder extends RecyclerView.ViewHolder implements Divided {
+
+        @BindView(R.id.player_avatar)
+        ImageView avatar;
+        @BindView(R.id.comment_author)
+        AuthorTextView author;
+        @BindView(R.id.comment_time_ago)
+        TextView timeAgo;
+        @BindView(R.id.comment_text)
+        TextView commentBody;
+        @BindView(R.id.comment_reply)
+        ImageButton reply;
+        @BindView(R.id.comment_like)
+        CheckableImageButton likeHeart;
+        @BindView(R.id.comment_likes_count)
+        TextView likesCount;
+
+        CommentViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    /**
+     * A {@link RecyclerView.ItemAnimator} which allows disabling move animations. RecyclerView
+     * does not like animating item height changes. {@link android.transition.ChangeBounds} allows
+     * this but in order to simultaneously collapse one item and expand another, we need to run the
+     * Transition on the entire RecyclerView. As such it attempts to move views around. This
+     * custom item animator allows us to stop RecyclerView from trying to handle this for us while
+     * the transition is running.
+     */
+    static class CommentAnimator extends SlideInItemAnimator {
+
+        private boolean animateMoves = false;
+
+        CommentAnimator() {
+            super();
+        }
+
+        void setAnimateMoves(boolean animateMoves) {
+            this.animateMoves = animateMoves;
+        }
+
+        @Override
+        public boolean animateMove(
+                RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+            if (!animateMoves) {
+                dispatchMoveFinished(holder);
+                return false;
+            }
+            return super.animateMove(holder, fromX, fromY, toX, toY);
+        }
+    }
+
     class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private static final int EXPAND = 0x1;
         private static final int COLLAPSE = 0x2;
         private static final int COMMENT_LIKE = 0x3;
         private static final int REPLY = 0x4;
-
-        private final List<Comment> comments = new ArrayList<>();
         final Transition expandCollapse;
+        private final List<Comment> comments = new ArrayList<>();
         private final View description;
+        int expandedCommentPosition = RecyclerView.NO_POSITION;
         private View footer;
-
         private boolean loading;
         private boolean noComments;
-        int expandedCommentPosition = RecyclerView.NO_POSITION;
 
         CommentsAdapter(
                 @NonNull View description,
@@ -781,9 +843,9 @@ public class DribbbleShot extends Activity {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == 0)  return R.layout.dribbble_shot_description;
+            if (position == 0) return R.layout.dribbble_shot_description;
             if (position == 1) {
-                if (loading)  return R.layout.loading;
+                if (loading) return R.layout.loading;
                 if (noComments) return R.layout.dribbble_no_comments;
             }
             if (footer != null) {
@@ -894,7 +956,9 @@ public class DribbbleShot extends Activity {
                                     holder.likeHeart.jumpDrawablesToCurrentState();
                                 }
 
-                                @Override public void onFailure(Call<Like> call, Throwable t) { }
+                                @Override
+                                public void onFailure(Call<Like> call, Throwable t) {
+                                }
                             });
                         }
                         if (enterComment != null && enterComment.hasFocus()) {
@@ -963,10 +1027,12 @@ public class DribbbleShot extends Activity {
                                     dribbblePrefs.getApi().likeComment(shot.id, comment.id);
                             likeCommentCall.enqueue(new Callback<Like>() {
                                 @Override
-                                public void onResponse(Call<Like> call, Response<Like> response) { }
+                                public void onResponse(Call<Like> call, Response<Like> response) {
+                                }
 
                                 @Override
-                                public void onFailure(Call<Like> call, Throwable t) { }
+                                public void onFailure(Call<Like> call, Throwable t) {
+                                }
                             });
                         } else {
                             comment.liked = false;
@@ -977,10 +1043,12 @@ public class DribbbleShot extends Activity {
                                     dribbblePrefs.getApi().unlikeComment(shot.id, comment.id);
                             unlikeCommentCall.enqueue(new Callback<Void>() {
                                 @Override
-                                public void onResponse(Call<Void> call, Response<Void> response) { }
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                }
 
                                 @Override
-                                public void onFailure(Call<Void> call, Throwable t) { }
+                                public void onFailure(Call<Void> call, Throwable t) {
+                                }
                             });
                         }
                     } else {
@@ -1018,7 +1086,8 @@ public class DribbbleShot extends Activity {
                         }
 
                         @Override
-                        public void onFailure(Call<List<Like>> call, Throwable t) { }
+                        public void onFailure(Call<List<Like>> call, Throwable t) {
+                        }
                     });
                 }
             });
@@ -1076,60 +1145,6 @@ public class DribbbleShot extends Activity {
             if (!loading) return;
             loading = false;
             notifyItemRemoved(1);
-        }
-    }
-
-    static class SimpleViewHolder extends RecyclerView.ViewHolder {
-
-        SimpleViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    static class CommentViewHolder extends RecyclerView.ViewHolder implements Divided {
-
-        @BindView(R.id.player_avatar) ImageView avatar;
-        @BindView(R.id.comment_author) AuthorTextView author;
-        @BindView(R.id.comment_time_ago) TextView timeAgo;
-        @BindView(R.id.comment_text) TextView commentBody;
-        @BindView(R.id.comment_reply) ImageButton reply;
-        @BindView(R.id.comment_like) CheckableImageButton likeHeart;
-        @BindView(R.id.comment_likes_count) TextView likesCount;
-
-        CommentViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-
-    /**
-     * A {@link RecyclerView.ItemAnimator} which allows disabling move animations. RecyclerView
-     * does not like animating item height changes. {@link android.transition.ChangeBounds} allows
-     * this but in order to simultaneously collapse one item and expand another, we need to run the
-     * Transition on the entire RecyclerView. As such it attempts to move views around. This
-     * custom item animator allows us to stop RecyclerView from trying to handle this for us while
-     * the transition is running.
-     */
-    static class CommentAnimator extends SlideInItemAnimator {
-
-        private boolean animateMoves = false;
-
-        CommentAnimator() {
-            super();
-        }
-
-        void setAnimateMoves(boolean animateMoves) {
-            this.animateMoves = animateMoves;
-        }
-
-        @Override
-        public boolean animateMove(
-                RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-            if (!animateMoves) {
-                dispatchMoveFinished(holder);
-                return false;
-            }
-            return super.animateMove(holder, fromX, fromY, toX, toY);
         }
     }
 

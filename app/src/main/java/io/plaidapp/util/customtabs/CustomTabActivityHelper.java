@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service and
- *
+ * <p>
  * Adapted from github.com/GoogleChrome/custom-tabs-client
  */
 public class CustomTabActivityHelper {
@@ -43,9 +43,9 @@ public class CustomTabActivityHelper {
      * Opens the URL on a Custom Tab if possible; otherwise falls back to opening it via
      * {@code Intent.ACTION_VIEW}
      *
-     * @param activity The host activity
+     * @param activity         The host activity
      * @param customTabsIntent a CustomTabsIntent to be used if Custom Tabs is available
-     * @param uri the Uri to be opened
+     * @param uri              the Uri to be opened
      */
     public static void openCustomTab(Activity activity,
                                      CustomTabsIntent customTabsIntent,
@@ -64,6 +64,7 @@ public class CustomTabActivityHelper {
 
     /**
      * Binds the Activity to the Custom Tabs Service
+     *
      * @param activity the activity to be bound to the service
      */
     public void bindCustomTabsService(Activity activity) {
@@ -92,6 +93,7 @@ public class CustomTabActivityHelper {
 
     /**
      * Unbinds the Activity from the Custom Tabs Service
+     *
      * @param activity the activity that is bound to the service
      */
     public void unbindCustomTabsService(Activity activity) {
@@ -117,6 +119,7 @@ public class CustomTabActivityHelper {
 
     /**
      * Register a Callback to be called when connected or disconnected from the Custom Tabs Service
+     *
      * @param connectionCallback
      */
     public void setConnectionCallback(ConnectionCallback connectionCallback) {
@@ -124,8 +127,8 @@ public class CustomTabActivityHelper {
     }
 
     /**
-     * @see {@link CustomTabsSession#mayLaunchUrl(Uri, Bundle, List)}
      * @return true if call to mayLaunchUrl was accepted
+     * @see {@link CustomTabsSession#mayLaunchUrl(Uri, Bundle, List)}
      */
     public boolean mayLaunchUrl(Uri uri, Bundle extras, List<Bundle> otherLikelyBundles) {
         if (mClient == null) return false;

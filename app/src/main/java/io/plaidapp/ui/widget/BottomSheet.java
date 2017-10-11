@@ -38,7 +38,7 @@ import io.plaidapp.util.ViewOffsetHelper;
  * A {@link FrameLayout} whose content can be dragged downward to be dismissed (either directly or
  * via a nested scrolling child). It must contain a single child view and exposes {@link Callbacks}
  * to respond to it's movement & dismissal.
- *
+ * <p>
  * Only implements the modal bottom sheet behavior from the material spec, not the persistent
  * behavior (yet).
  */
@@ -52,8 +52,6 @@ public class BottomSheet extends FrameLayout {
     // child views & helpers
     View sheet;
     ViewOffsetHelper sheetOffsetHelper;
-    private ViewDragHelper sheetDragHelper;
-
     // state
     int sheetExpandedTop;
     int sheetBottom;
@@ -61,9 +59,69 @@ public class BottomSheet extends FrameLayout {
     boolean settling = false;
     boolean initialHeightChecked = false;
     boolean hasInteractedWithSheet = false;
+    private ViewDragHelper sheetDragHelper;
     private int nestedScrollInitialTop;
     private boolean isNestedScrolling = false;
     private List<Callbacks> callbacks;
+    private final ViewDragHelper.Callback dragHelperCallbacks = new ViewDragHelper.Callback() {
+
+        @Override
+        public boolean tryCaptureView(View child, int pointerId) {
+            return child == sheet;
+        }
+
+        @Override
+        public int clampViewPositionVertical(View child, int top, int dy) {
+            return Math.min(Math.max(top, sheetExpandedTop), sheetBottom);
+        }
+
+        @Override
+        public int clampViewPositionHorizontal(View child, int left, int dx) {
+            return sheet.getLeft();
+        }
+
+        @Override
+        public int getViewVerticalDragRange(View child) {
+            return sheetBottom - sheetExpandedTop;
+        }
+
+        @Override
+        public void onViewPositionChanged(View child, int left, int top, int dx, int dy) {
+            // notify the offset helper that the sheets offsets have been changed externally
+            sheetOffsetHelper.resyncOffsets();
+            dispatchPositionChangedCallback();
+        }
+
+        @Override
+        public void onViewReleased(View releasedChild, float velocityX, float velocityY) {
+            // dismiss on downward fling, otherwise settle back to expanded position
+            final boolean dismiss = velocityY >= SCALED_MIN_FLING_DISMISS_VELOCITY;
+            animateSettle(dismiss ? dismissOffset : 0, velocityY);
+        }
+
+    };
+    private final OnLayoutChangeListener sheetLayout = new OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                   int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            sheetExpandedTop = top;
+            sheetBottom = bottom;
+            dismissOffset = bottom - top;
+            sheetOffsetHelper.onViewLayout();
+
+            // modal bottom sheet content should not initially be taller than the 16:9 keyline
+            if (!initialHeightChecked) {
+                applySheetInitialHeightOffset(false, -1);
+                initialHeightChecked = true;
+            } else if (!hasInteractedWithSheet
+                    && (oldBottom - oldTop) != (bottom - top)) { /* sheet height changed */
+                /* if the sheet content's height changes before the user has interacted with it
+                   then consider this still in the 'initial' state and apply the height constraint,
+                   but in this case, animate to it */
+                applySheetInitialHeightOffset(true, oldTop - sheetExpandedTop);
+            }
+        }
+    };
 
     public BottomSheet(Context context) {
         this(context, null, 0);
@@ -76,15 +134,7 @@ public class BottomSheet extends FrameLayout {
     public BottomSheet(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         SCALED_MIN_FLING_DISMISS_VELOCITY =
-            (int) (context.getResources().getDisplayMetrics().density * MIN_FLING_DISMISS_VELOCITY);
-    }
-
-    /**
-     * Callbacks for responding to interactions with the bottom sheet.
-     */
-    public static abstract class Callbacks {
-        public void onSheetDismissed() { }
-        public void onSheetPositionChanged(int sheetTop, boolean userInteracted) { }
+                (int) (context.getResources().getDisplayMetrics().density * MIN_FLING_DISMISS_VELOCITY);
     }
 
     public void registerCallback(Callbacks callback) {
@@ -222,10 +272,10 @@ public class BottomSheet extends FrameLayout {
     void animateSettle(int targetOffset, float initialVelocity) {
         if (settling) return;
         if (sheetOffsetHelper.getTopAndBottomOffset() == targetOffset) {
-          if (targetOffset >= dismissOffset) {
-              dispatchDismissCallback();
-          }
-          return;
+            if (targetOffset >= dismissOffset) {
+                dispatchDismissCallback();
+            }
+            return;
         }
 
         settling = true;
@@ -263,67 +313,6 @@ public class BottomSheet extends FrameLayout {
         anim.start();
     }
 
-    private final ViewDragHelper.Callback dragHelperCallbacks = new ViewDragHelper.Callback() {
-
-        @Override
-        public boolean tryCaptureView(View child, int pointerId) {
-            return child == sheet;
-        }
-
-        @Override
-        public int clampViewPositionVertical(View child, int top, int dy) {
-            return Math.min(Math.max(top, sheetExpandedTop), sheetBottom);
-        }
-
-        @Override
-        public int clampViewPositionHorizontal(View child, int left, int dx) {
-            return sheet.getLeft();
-        }
-
-        @Override
-        public int getViewVerticalDragRange(View child) {
-            return sheetBottom - sheetExpandedTop;
-        }
-
-        @Override
-        public void onViewPositionChanged(View child, int left, int top, int dx, int dy) {
-            // notify the offset helper that the sheets offsets have been changed externally
-            sheetOffsetHelper.resyncOffsets();
-            dispatchPositionChangedCallback();
-        }
-
-        @Override
-        public void onViewReleased(View releasedChild, float velocityX, float velocityY) {
-            // dismiss on downward fling, otherwise settle back to expanded position
-            final boolean dismiss = velocityY >= SCALED_MIN_FLING_DISMISS_VELOCITY;
-            animateSettle(dismiss ? dismissOffset : 0, velocityY);
-        }
-
-    };
-
-    private final OnLayoutChangeListener sheetLayout = new OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                   int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            sheetExpandedTop = top;
-            sheetBottom = bottom;
-            dismissOffset = bottom - top;
-            sheetOffsetHelper.onViewLayout();
-
-            // modal bottom sheet content should not initially be taller than the 16:9 keyline
-            if (!initialHeightChecked) {
-                applySheetInitialHeightOffset(false, -1);
-                initialHeightChecked = true;
-            } else if (!hasInteractedWithSheet
-                    && (oldBottom - oldTop) != (bottom - top)) { /* sheet height changed */
-                /* if the sheet content's height changes before the user has interacted with it
-                   then consider this still in the 'initial' state and apply the height constraint,
-                   but in this case, animate to it */
-                applySheetInitialHeightOffset(true, oldTop - sheetExpandedTop);
-            }
-        }
-    };
-
     void applySheetInitialHeightOffset(boolean animateChange, int previousOffset) {
         final int minimumGap = sheet.getMeasuredWidth() / 16 * 9;
         if (sheet.getTop() < minimumGap) {
@@ -350,6 +339,17 @@ public class BottomSheet extends FrameLayout {
             for (Callbacks callback : callbacks) {
                 callback.onSheetPositionChanged(sheet.getTop(), hasInteractedWithSheet);
             }
+        }
+    }
+
+    /**
+     * Callbacks for responding to interactions with the bottom sheet.
+     */
+    public static abstract class Callbacks {
+        public void onSheetDismissed() {
+        }
+
+        public void onSheetPositionChanged(int sheetTop, boolean userInteracted) {
         }
     }
 }

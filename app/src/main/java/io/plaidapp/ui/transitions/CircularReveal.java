@@ -43,7 +43,8 @@ public class CircularReveal extends Visibility {
     private Point center;
     private float startRadius;
     private float endRadius;
-    private @IdRes int centerOnId = View.NO_ID;
+    private @IdRes
+    int centerOnId = View.NO_ID;
     private View centerOn;
 
     public CircularReveal() {

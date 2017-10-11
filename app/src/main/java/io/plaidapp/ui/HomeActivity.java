@@ -108,26 +108,146 @@ public class HomeActivity extends Activity {
     private static final int RC_NEW_DESIGNER_NEWS_STORY = 4;
     private static final int RC_NEW_DESIGNER_NEWS_LOGIN = 5;
 
-    @BindView(R.id.drawer) DrawerLayout drawer;
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.grid) RecyclerView gridImage;
-    @BindView(R.id.fab) ImageButton fab;
-    @BindView(R.id.filters) RecyclerView filtersList;
-    @BindView(android.R.id.empty) ProgressBar loading;
-    @Nullable @BindView(R.id.no_connection) ImageView noConnection;
+    @BindView(R.id.drawer)
+    DrawerLayout drawer;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.grid)
+    RecyclerView gridImage;
+    @BindView(R.id.fab)
+    ImageButton fab;
+    @BindView(R.id.filters)
+    RecyclerView filtersList;
+    @BindView(android.R.id.empty)
+    ProgressBar loading;
+    @Nullable
+    @BindView(R.id.no_connection)
+    ImageView noConnection;
     ImageButton fabPosting;
     GridLayoutManager layoutManager;
-    @BindInt(R.integer.num_columns) int columns;
+    @BindInt(R.integer.num_columns)
+    int columns;
     boolean connected = true;
-    private TextView noFiltersEmptyText;
-    private boolean monitoringConnectivity = false;
-
     // data
     DataManager dataManager;
     FeedAdapter adapter;
     FilterAdapter filtersAdapter;
+    BroadcastReceiver postStoryResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ensurePostingProgressInflated();
+            switch (intent.getAction()) {
+                case PostStoryService.BROADCAST_ACTION_SUCCESS:
+                    // success animation
+                    AnimatedVectorDrawable complete =
+                            (AnimatedVectorDrawable) getDrawable(R.drawable.avd_upload_complete);
+                    if (complete != null) {
+                        fabPosting.setImageDrawable(complete);
+                        complete.start();
+                        fabPosting.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                fabPosting.setVisibility(View.GONE);
+                            }
+                        }, 2100); // length of R.drawable.avd_upload_complete
+                    }
+
+                    // actually add the story to the gridImage
+                    Story newStory = intent.getParcelableExtra(PostStoryService.EXTRA_NEW_STORY);
+                    adapter.addAndResort(Collections.singletonList(newStory));
+                    break;
+                case PostStoryService.BROADCAST_ACTION_FAILURE:
+                    // failure animation
+                    AnimatedVectorDrawable failed =
+                            (AnimatedVectorDrawable) getDrawable(R.drawable.avd_upload_error);
+                    if (failed != null) {
+                        fabPosting.setImageDrawable(failed);
+                        failed.start();
+                    }
+                    // remove the upload progress 'fab' and reshow the regular one
+                    fabPosting.animate()
+                            .alpha(0f)
+                            .rotation(90f)
+                            .setStartDelay(2000L) // leave error on screen briefly
+                            .setDuration(300L)
+                            .setInterpolator(AnimUtils.getFastOutSlowInInterpolator(HomeActivity
+                                    .this))
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    fabPosting.setVisibility(View.GONE);
+                                    fabPosting.setAlpha(1f);
+                                    fabPosting.setRotation(0f);
+                                }
+                            });
+                    break;
+            }
+            unregisterPostStoryResultListener();
+        }
+    };
+    private TextView noFiltersEmptyText;
+    private boolean monitoringConnectivity = false;
     private DesignerNewsPrefs designerNewsPrefs;
     private DribbblePrefs dribbblePrefs;
+    // listener for notifying adapter when data sources are deactivated
+    private FilterAdapter.FiltersChangedCallbacks filtersChangedCallbacks =
+            new FilterAdapter.FiltersChangedCallbacks() {
+                @Override
+                public void onFiltersChanged(Source changedFilter) {
+                    if (!changedFilter.active) {
+                        adapter.removeDataSource(changedFilter.key);
+                    }
+                    checkEmptyState();
+                }
+
+                @Override
+                public void onFilterRemoved(Source removed) {
+                    adapter.removeDataSource(removed.key);
+                    checkEmptyState();
+                }
+            };
+    private RecyclerView.OnScrollListener toolbarElevation = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            // we want the gridImage to scroll over the top of the toolbar but for the toolbar items
+            // to be clickable when visible. To achieve this we play games with elevation. The
+            // toolbar is laid out in front of the gridImage but when we scroll, we lower it's elevation
+            // to allow the content to pass in front (and reset when scrolled to top of the gridImage)
+            if (newState == RecyclerView.SCROLL_STATE_IDLE
+                    && layoutManager.findFirstVisibleItemPosition() == 0
+                    && layoutManager.findViewByPosition(0).getTop() == gridImage.getPaddingTop()
+                    && toolbar.getTranslationZ() != 0) {
+                // at top, reset elevation
+                toolbar.setTranslationZ(2f);
+            } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING
+                    && toolbar.getTranslationZ() != -1f) {
+                // gridImage scrolled, lower toolbar to allow content to pass in front
+                toolbar.setTranslationZ(-1f);
+            }
+        }
+    };
+    private ConnectivityManager.NetworkCallback connectivityCallback
+            = new ConnectivityManager.NetworkCallback() {
+        @Override
+        public void onAvailable(Network network) {
+            connected = true;
+            if (adapter.getDataItemCount() != 0) return;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TransitionManager.beginDelayedTransition(drawer);
+                    noConnection.setVisibility(View.GONE);
+                    loading.setVisibility(View.VISIBLE);
+                    dataManager.loadAllDataSources();
+                }
+            });
+        }
+
+        @Override
+        public void onLost(Network network) {
+            connected = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,19 +269,19 @@ public class HomeActivity extends Activity {
         designerNewsPrefs = DesignerNewsPrefs.get(this);
         filtersAdapter = new FilterAdapter(this, SourceManager.getSources(this),
                 new FilterAdapter.FilterAuthoriser() {
-            @Override
-            public void requestDribbbleAuthorisation(View sharedElement, Source forSource) {
-                Intent login = new Intent(HomeActivity.this, DribbbleLogin.class);
-                MorphTransform.addExtras(login,
-                        ContextCompat.getColor(HomeActivity.this, R.color.background_dark),
-                        sharedElement.getHeight() / 2);
-                ActivityOptions options =
-                        ActivityOptions.makeSceneTransitionAnimation(HomeActivity.this,
-                                sharedElement, getString(R.string.transition_dribbble_login));
-                startActivityForResult(login,
-                        getAuthSourceRequestCode(forSource), options.toBundle());
-            }
-        });
+                    @Override
+                    public void requestDribbbleAuthorisation(View sharedElement, Source forSource) {
+                        Intent login = new Intent(HomeActivity.this, DribbbleLogin.class);
+                        MorphTransform.addExtras(login,
+                                ContextCompat.getColor(HomeActivity.this, R.color.background_dark),
+                                sharedElement.getHeight() / 2);
+                        ActivityOptions options =
+                                ActivityOptions.makeSceneTransitionAnimation(HomeActivity.this,
+                                        sharedElement, getString(R.string.transition_dribbble_login));
+                        startActivityForResult(login,
+                                getAuthSourceRequestCode(forSource), options.toBundle());
+                    }
+                });
         dataManager = new DataManager(this, filtersAdapter) {
             @Override
             public void onDataLoaded(List<? extends PlaidItem> data) {
@@ -458,45 +578,6 @@ public class HomeActivity extends Activity {
         super.onDestroy();
     }
 
-    // listener for notifying adapter when data sources are deactivated
-    private FilterAdapter.FiltersChangedCallbacks filtersChangedCallbacks =
-            new FilterAdapter.FiltersChangedCallbacks() {
-        @Override
-        public void onFiltersChanged(Source changedFilter) {
-            if (!changedFilter.active) {
-                adapter.removeDataSource(changedFilter.key);
-            }
-            checkEmptyState();
-        }
-
-        @Override
-        public void onFilterRemoved(Source removed) {
-            adapter.removeDataSource(removed.key);
-            checkEmptyState();
-        }
-    };
-
-    private RecyclerView.OnScrollListener toolbarElevation = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            // we want the gridImage to scroll over the top of the toolbar but for the toolbar items
-            // to be clickable when visible. To achieve this we play games with elevation. The
-            // toolbar is laid out in front of the gridImage but when we scroll, we lower it's elevation
-            // to allow the content to pass in front (and reset when scrolled to top of the gridImage)
-            if (newState == RecyclerView.SCROLL_STATE_IDLE
-                    && layoutManager.findFirstVisibleItemPosition() == 0
-                    && layoutManager.findViewByPosition(0).getTop() == gridImage.getPaddingTop()
-                    && toolbar.getTranslationZ() != 0) {
-                // at top, reset elevation
-                toolbar.setTranslationZ(2f);
-            } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING
-                    && toolbar.getTranslationZ() != -1f) {
-                // gridImage scrolled, lower toolbar to allow content to pass in front
-                toolbar.setTranslationZ(-1f);
-            }
-        }
-    };
-
     @OnClick(R.id.fab)
     protected void fabClick() {
         if (designerNewsPrefs.isLoggedIn()) {
@@ -517,60 +598,6 @@ public class HomeActivity extends Activity {
             startActivityForResult(intent, RC_NEW_DESIGNER_NEWS_LOGIN, options.toBundle());
         }
     }
-
-    BroadcastReceiver postStoryResultReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ensurePostingProgressInflated();
-            switch (intent.getAction()) {
-                case PostStoryService.BROADCAST_ACTION_SUCCESS:
-                    // success animation
-                    AnimatedVectorDrawable complete =
-                            (AnimatedVectorDrawable) getDrawable(R.drawable.avd_upload_complete);
-                    if (complete != null) {
-                        fabPosting.setImageDrawable(complete);
-                        complete.start();
-                        fabPosting.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                fabPosting.setVisibility(View.GONE);
-                            }
-                        }, 2100); // length of R.drawable.avd_upload_complete
-                    }
-
-                    // actually add the story to the gridImage
-                    Story newStory = intent.getParcelableExtra(PostStoryService.EXTRA_NEW_STORY);
-                    adapter.addAndResort(Collections.singletonList(newStory));
-                    break;
-                case PostStoryService.BROADCAST_ACTION_FAILURE:
-                    // failure animation
-                    AnimatedVectorDrawable failed =
-                            (AnimatedVectorDrawable) getDrawable(R.drawable.avd_upload_error);
-                    if (failed != null) {
-                        fabPosting.setImageDrawable(failed);
-                        failed.start();
-                    }
-                    // remove the upload progress 'fab' and reshow the regular one
-                    fabPosting.animate()
-                            .alpha(0f)
-                            .rotation(90f)
-                            .setStartDelay(2000L) // leave error on screen briefly
-                            .setDuration(300L)
-                            .setInterpolator(AnimUtils.getFastOutSlowInInterpolator(HomeActivity
-                                    .this))
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    fabPosting.setVisibility(View.GONE);
-                                    fabPosting.setAlpha(1f);
-                                    fabPosting.setRotation(0f);
-                                }
-                            });
-                    break;
-            }
-            unregisterPostStoryResultListener();
-        }
-    };
 
     void registerPostStoryResultListener() {
         IntentFilter intentFilter = new IntentFilter();
@@ -741,10 +768,10 @@ public class HomeActivity extends Activity {
 
     /**
      * Highlight the new source(s) by:
-     *      1. opening the drawer
-     *      2. scrolling new source(s) into view
-     *      3. flashing new source(s) background
-     *      4. closing the drawer (if user hasn't interacted with it)
+     * 1. opening the drawer
+     * 2. scrolling new source(s) into view
+     * 3. flashing new source(s) background
+     * 4. closing the drawer (if user hasn't interacted with it)
      */
     private void highlightNewSources(final Source... sources) {
         final Runnable closeDrawerRunnable = new Runnable() {
@@ -820,32 +847,9 @@ public class HomeActivity extends Activity {
 
             connectivityManager.registerNetworkCallback(
                     new NetworkRequest.Builder()
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
+                            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
                     connectivityCallback);
             monitoringConnectivity = true;
         }
     }
-
-    private ConnectivityManager.NetworkCallback connectivityCallback
-            = new ConnectivityManager.NetworkCallback() {
-        @Override
-        public void onAvailable(Network network) {
-            connected = true;
-            if (adapter.getDataItemCount() != 0) return;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    TransitionManager.beginDelayedTransition(drawer);
-                    noConnection.setVisibility(View.GONE);
-                    loading.setVisibility(View.VISIBLE);
-                    dataManager.loadAllDataSources();
-                }
-            });
-        }
-
-        @Override
-        public void onLost(Network network) {
-            connected = false;
-        }
-    };
 }

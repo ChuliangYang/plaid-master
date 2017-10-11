@@ -51,18 +51,13 @@ import io.plaidapp.util.ViewUtils;
 public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterViewHolder>
         implements ItemTouchHelperAdapter, DribbblePrefs.DribbbleLoginStatusListener {
 
-    public interface FilterAuthoriser {
-        void requestDribbbleAuthorisation(View sharedElement, Source forSource);
-    }
-
     private static final int FILTER_ICON_ENABLED_ALPHA = 179; // 70%
     private static final int FILTER_ICON_DISABLED_ALPHA = 51; // 20%
-
     private final List<Source> filters;
     private final FilterAuthoriser authoriser;
     private final Context context;
-    private @Nullable List<FiltersChangedCallbacks> callbacks;
-
+    private @Nullable
+    List<FiltersChangedCallbacks> callbacks;
     public FilterAdapter(@NonNull Context context,
                          @NonNull List<Source> filters,
                          @NonNull FilterAuthoriser authoriser) {
@@ -281,9 +276,16 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
         }
     }
 
+    public interface FilterAuthoriser {
+        void requestDribbbleAuthorisation(View sharedElement, Source forSource);
+    }
+
     public static abstract class FiltersChangedCallbacks {
-        public void onFiltersChanged(Source changedFilter) { }
-        public void onFilterRemoved(Source removed) { }
+        public void onFiltersChanged(Source changedFilter) {
+        }
+
+        public void onFilterRemoved(Source removed) {
+        }
     }
 
     public static class FilterViewHolder extends RecyclerView.ViewHolder {
@@ -315,12 +317,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
             return new FilterHolderInfo();
         }
 
-        /* package */ static class FilterHolderInfo extends ItemHolderInfo {
-            boolean doEnable;
-            boolean doDisable;
-            boolean doHighlight;
-        }
-
         @NonNull
         @Override
         public ItemHolderInfo recordPreLayoutInformation(RecyclerView.State state,
@@ -348,9 +344,9 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
 
                 if (info.doEnable || info.doDisable) {
                     ObjectAnimator iconAlpha = ObjectAnimator.ofInt(holder.filterIcon,
-                                    ViewUtils.IMAGE_ALPHA,
-                                    info.doEnable ? FILTER_ICON_ENABLED_ALPHA :
-                                            FILTER_ICON_DISABLED_ALPHA);
+                            ViewUtils.IMAGE_ALPHA,
+                            info.doEnable ? FILTER_ICON_ENABLED_ALPHA :
+                                    FILTER_ICON_DISABLED_ALPHA);
                     iconAlpha.setDuration(300L);
                     iconAlpha.setInterpolator(AnimUtils.getFastOutSlowInInterpolator(holder
                             .itemView.getContext()));
@@ -398,6 +394,12 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
                 }
             }
             return super.animateChange(oldHolder, newHolder, preInfo, postInfo);
+        }
+
+        /* package */ static class FilterHolderInfo extends ItemHolderInfo {
+            boolean doEnable;
+            boolean doDisable;
+            boolean doHighlight;
         }
     }
 

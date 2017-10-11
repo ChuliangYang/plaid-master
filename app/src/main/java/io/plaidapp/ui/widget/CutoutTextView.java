@@ -64,7 +64,8 @@ public class CutoutTextView extends View {
                 if (font != null) {
                     textPaint.setTypeface(font);
                 }
-            } catch (Resources.NotFoundException nfe) { }
+            } catch (Resources.NotFoundException nfe) {
+            }
         }
         if (a.hasValue(R.styleable.CutoutTextView_foregroundColor)) {
             foregroundColor = a.getColor(R.styleable.CutoutTextView_foregroundColor,

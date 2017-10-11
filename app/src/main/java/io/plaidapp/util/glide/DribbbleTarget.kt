@@ -18,15 +18,14 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.graphics.Palette
-import android.view.View
 import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import io.plaidapp.R
 import io.plaidapp.ui.widget.BadgedFourThreeImageView
 import io.plaidapp.util.ColorUtils
-import io.plaidapp.util.isAnimated
 import io.plaidapp.util.ViewUtils
+import io.plaidapp.util.isAnimated
 import io.plaidapp.util.measured
 
 /**

@@ -46,7 +46,7 @@ import io.plaidapp.R;
  * A view for displaying text that is will be overlapped by a Floating Action Button (FAB).
  * This view will indent itself at the given overlap point (as specified by
  * {@link #setFabOverlapGravity(int)}) to flow around it.
- *
+ * <p>
  * Not actually a TextView but conforms to many of it's idioms.
  */
 @TargetApi(Build.VERSION_CODES.M)

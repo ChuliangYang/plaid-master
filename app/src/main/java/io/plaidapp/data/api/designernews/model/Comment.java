@@ -28,18 +28,29 @@ import java.util.List;
  */
 public class Comment implements Parcelable {
 
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Comment> CREATOR = new Parcelable.Creator<Comment>() {
+        @Override
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        @Override
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
     public final long id;
     public final String body;
     public final String body_html;
     public final Date created_at;
     public final int depth;
-    public int vote_count;
     public final long user_id;
     public final String user_display_name;
     public final String user_portrait_url;
     public final String user_job;
     public final List<Comment> comments;
-
+    public int vote_count;
     // TODO move this to a decorator
     public Boolean upvoted;
 
@@ -65,6 +76,53 @@ public class Comment implements Parcelable {
         this.user_portrait_url = user_portrait_url;
         this.user_job = user_job;
         this.comments = comments;
+    }
+
+    /* parcelable */
+
+    protected Comment(Parcel in) {
+        id = in.readLong();
+        body = in.readString();
+        body_html = in.readString();
+        long tmpCreated_at = in.readLong();
+        created_at = tmpCreated_at != -1 ? new Date(tmpCreated_at) : null;
+        depth = in.readInt();
+        vote_count = in.readInt();
+        user_id = in.readLong();
+        user_display_name = in.readString();
+        user_portrait_url = in.readString();
+        user_job = in.readString();
+        if (in.readByte() == 0x01) {
+            comments = new ArrayList<Comment>();
+            in.readList(comments, Comment.class.getClassLoader());
+        } else {
+            comments = null;
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(body);
+        dest.writeString(body_html);
+        dest.writeLong(created_at != null ? created_at.getTime() : -1L);
+        dest.writeInt(depth);
+        dest.writeInt(vote_count);
+        dest.writeLong(user_id);
+        dest.writeString(user_display_name);
+        dest.writeString(user_portrait_url);
+        dest.writeString(user_job);
+        if (comments == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(comments);
+        }
     }
 
     public static class Builder {
@@ -134,65 +192,5 @@ public class Comment implements Parcelable {
                     user_display_name, user_portrait_url, user_job, null);
         }
     }
-
-    /* parcelable */
-
-    protected Comment(Parcel in) {
-        id = in.readLong();
-        body = in.readString();
-        body_html = in.readString();
-        long tmpCreated_at = in.readLong();
-        created_at = tmpCreated_at != -1 ? new Date(tmpCreated_at) : null;
-        depth = in.readInt();
-        vote_count = in.readInt();
-        user_id = in.readLong();
-        user_display_name = in.readString();
-        user_portrait_url = in.readString();
-        user_job = in.readString();
-        if (in.readByte() == 0x01) {
-            comments = new ArrayList<Comment>();
-            in.readList(comments, Comment.class.getClassLoader());
-        } else {
-            comments = null;
-        }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(body);
-        dest.writeString(body_html);
-        dest.writeLong(created_at != null ? created_at.getTime() : -1L);
-        dest.writeInt(depth);
-        dest.writeInt(vote_count);
-        dest.writeLong(user_id);
-        dest.writeString(user_display_name);
-        dest.writeString(user_portrait_url);
-        dest.writeString(user_job);
-        if (comments == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(comments);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Comment> CREATOR = new Parcelable.Creator<Comment>() {
-        @Override
-        public Comment createFromParcel(Parcel in) {
-            return new Comment(in);
-        }
-
-        @Override
-        public Comment[] newArray(int size) {
-            return new Comment[size];
-        }
-    };
 
 }

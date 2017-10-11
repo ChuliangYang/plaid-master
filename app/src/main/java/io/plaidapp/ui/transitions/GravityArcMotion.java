@@ -33,7 +33,7 @@ public class GravityArcMotion extends ArcMotion {
     private static final float DEFAULT_MIN_ANGLE_DEGREES = 0;
     private static final float DEFAULT_MAX_ANGLE_DEGREES = 70;
     private static final float DEFAULT_MAX_TANGENT = (float)
-            Math.tan(Math.toRadians(DEFAULT_MAX_ANGLE_DEGREES/2));
+            Math.tan(Math.toRadians(DEFAULT_MAX_ANGLE_DEGREES / 2));
 
     private float mMinimumHorizontalAngle = 0;
     private float mMinimumVerticalAngle = 0;
@@ -42,10 +42,26 @@ public class GravityArcMotion extends ArcMotion {
     private float mMinimumVerticalTangent = 0;
     private float mMaximumTangent = DEFAULT_MAX_TANGENT;
 
-    public GravityArcMotion() {}
+    public GravityArcMotion() {
+    }
 
     public GravityArcMotion(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    private static float toTangent(float arcInDegrees) {
+        if (arcInDegrees < 0 || arcInDegrees > 90) {
+            throw new IllegalArgumentException("Arc must be between 0 and 90 degrees");
+        }
+        return (float) Math.tan(Math.toRadians(arcInDegrees / 2));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public float getMinimumHorizontalAngle() {
+        return mMinimumHorizontalAngle;
     }
 
     /**
@@ -61,8 +77,8 @@ public class GravityArcMotion extends ArcMotion {
      * @inheritDoc
      */
     @Override
-    public float getMinimumHorizontalAngle() {
-        return mMinimumHorizontalAngle;
+    public float getMinimumVerticalAngle() {
+        return mMinimumVerticalAngle;
     }
 
     /**
@@ -78,8 +94,8 @@ public class GravityArcMotion extends ArcMotion {
      * @inheritDoc
      */
     @Override
-    public float getMinimumVerticalAngle() {
-        return mMinimumVerticalAngle;
+    public float getMaximumAngle() {
+        return mMaximumAngle;
     }
 
     /**
@@ -89,21 +105,6 @@ public class GravityArcMotion extends ArcMotion {
     public void setMaximumAngle(float angleInDegrees) {
         mMaximumAngle = angleInDegrees;
         mMaximumTangent = toTangent(angleInDegrees);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public float getMaximumAngle() {
-        return mMaximumAngle;
-    }
-
-    private static float toTangent(float arcInDegrees) {
-        if (arcInDegrees < 0 || arcInDegrees > 90) {
-            throw new IllegalArgumentException("Arc must be between 0 and 90 degrees");
-        }
-        return (float) Math.tan(Math.toRadians(arcInDegrees / 2));
     }
 
     @Override

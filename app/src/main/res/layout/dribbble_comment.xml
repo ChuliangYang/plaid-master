@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,40 +14,39 @@
   limitations under the License.
   -->
 
-<io.plaidapp.ui.widget.ForegroundRelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<io.plaidapp.ui.widget.ForegroundRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:listPreferredItemHeight"
-    android:paddingTop="@dimen/padding_normal"
-    android:paddingEnd="@dimen/padding_normal"
-    android:paddingBottom="@dimen/padding_normal"
-    android:clipToPadding="false"
-    android:foreground="?android:selectableItemBackground"
     android:background="@drawable/comment_background"
-    android:stateListAnimator="@animator/comment_selection"
-    android:descendantFocusability="blocksDescendants">
+    android:clipToPadding="false"
+    android:descendantFocusability="blocksDescendants"
+    android:foreground="?android:selectableItemBackground"
+    android:minHeight="?android:listPreferredItemHeight"
+    android:paddingBottom="@dimen/padding_normal"
+    android:paddingEnd="@dimen/padding_normal"
+    android:paddingTop="@dimen/padding_normal"
+    android:stateListAnimator="@animator/comment_selection">
 
     <io.plaidapp.ui.widget.CircularImageView
         android:id="@+id/player_avatar"
         android:layout_width="@dimen/avatar_bounds"
         android:layout_height="@dimen/avatar_bounds"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_marginEnd="@dimen/avatar_margin"
         android:layout_marginStart="@dimen/avatar_margin"
+        android:foreground="@drawable/avatar_ripple"
         android:padding="@dimen/avatar_padding"
-        android:stateListAnimator="@animator/raise"
         android:src="@drawable/avatar_placeholder"
-        android:foreground="@drawable/avatar_ripple" />
+        android:stateListAnimator="@animator/raise" />
 
     <io.plaidapp.ui.widget.BaselineGridTextView
         android:id="@+id/comment_time_ago"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:textAppearance="@style/TextAppearance.CommentTimestamp"
         tools:text="3 hours ago" />
 
@@ -56,11 +54,11 @@
         android:id="@+id/comment_author"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_normal"
         android:layout_toEndOf="@id/player_avatar"
         android:layout_toStartOf="@id/comment_time_ago"
-        android:layout_marginEnd="@dimen/spacing_normal"
-        android:lines="1"
         android:ellipsize="end"
+        android:lines="1"
         android:textAppearance="@style/TextAppearance.CommentAuthor.Dribbble"
         tools:text="Nick B" />
 
@@ -69,8 +67,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@id/player_avatar"
         android:layout_below="@id/comment_author"
+        android:layout_toEndOf="@id/player_avatar"
         android:textAppearance="@style/TextAppearance.Comment"
         android:textColorHighlight="@color/dribbble_link_highlight"
         android:textColorLink="@color/dribbble_links"
@@ -80,38 +78,38 @@
         android:id="@+id/comment_likes_count"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/comment_actions_height"
-        android:padding="@dimen/spacing_normal"
-        android:paddingTop="@dimen/spacing_normal"
-        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
-        android:gravity="end|center_vertical"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/comment_text"
-        android:textColor="@color/dark_icon"
-        android:text="@string/comment_likes_count"
+        android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
         android:background="?android:selectableItemBackgroundBorderless"
-        android:visibility="gone"  />
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
+        android:text="@string/comment_likes_count"
+        android:textColor="@color/dark_icon"
+        android:visibility="gone" />
 
     <io.plaidapp.ui.widget.CheckableImageButton
         android:id="@+id/comment_like"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/comment_actions_height"
-        android:padding="@dimen/spacing_normal"
+        android:layout_below="@id/comment_text"
         android:layout_marginEnd="@dimen/comment_like_margin_adjustment"
         android:layout_toStartOf="@id/comment_likes_count"
-        android:layout_below="@id/comment_text"
-        android:src="@drawable/asl_comment_heart"
         android:background="?android:selectableItemBackgroundBorderless"
+        android:padding="@dimen/spacing_normal"
+        android:src="@drawable/asl_comment_heart"
         android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/comment_reply"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/comment_actions_height"
-        android:padding="@dimen/spacing_normal"
-        android:layout_toStartOf="@id/comment_like"
         android:layout_below="@id/comment_text"
-        android:src="@drawable/ic_reply"
+        android:layout_toStartOf="@id/comment_like"
         android:background="?android:selectableItemBackgroundBorderless"
+        android:padding="@dimen/spacing_normal"
+        android:src="@drawable/ic_reply"
         android:visibility="gone" />
 
 </io.plaidapp.ui.widget.ForegroundRelativeLayout>

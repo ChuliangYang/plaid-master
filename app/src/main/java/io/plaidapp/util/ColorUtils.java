@@ -34,25 +34,29 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class ColorUtils {
 
-    private ColorUtils() { }
-
     public static final int IS_LIGHT = 0;
     public static final int IS_DARK = 1;
     public static final int LIGHTNESS_UNKNOWN = 2;
+    private ColorUtils() {
+    }
 
     /**
      * Set the alpha component of {@code color} to be {@code alpha}.
      */
-    public static @CheckResult @ColorInt int modifyAlpha(@ColorInt int color,
-                                                         @IntRange(from = 0, to = 255) int alpha) {
+    public static @CheckResult
+    @ColorInt
+    int modifyAlpha(@ColorInt int color,
+                    @IntRange(from = 0, to = 255) int alpha) {
         return (color & 0x00ffffff) | (alpha << 24);
     }
 
     /**
      * Set the alpha component of {@code color} to be {@code alpha}.
      */
-    public static @CheckResult @ColorInt int modifyAlpha(@ColorInt int color,
-                                                      @FloatRange(from = 0f, to = 1f) float alpha) {
+    public static @CheckResult
+    @ColorInt
+    int modifyAlpha(@ColorInt int color,
+                    @FloatRange(from = 0f, to = 1f) float alpha) {
         return modifyAlpha(color, (int) (255f * alpha));
     }
 
@@ -62,13 +66,15 @@ public class ColorUtils {
      * Annoyingly we have to return this Lightness 'enum' rather than a boolean as palette isn't
      * guaranteed to find the most populous color.
      */
-    public static @Lightness int isDark(Palette palette) {
+    public static @Lightness
+    int isDark(Palette palette) {
         Palette.Swatch mostPopulous = getMostPopulousSwatch(palette);
         if (mostPopulous == null) return LIGHTNESS_UNKNOWN;
         return isDark(mostPopulous.getHsl()) ? IS_DARK : IS_LIGHT;
     }
 
-    public static @Nullable Palette.Swatch getMostPopulousSwatch(Palette palette) {
+    public static @Nullable
+    Palette.Swatch getMostPopulousSwatch(Palette palette) {
         Palette.Swatch mostPopulous = null;
         if (palette != null) {
             for (Palette.Swatch swatch : palette.getSwatches()) {
@@ -125,14 +131,15 @@ public class ColorUtils {
      * Calculate a variant of the color to make it more suitable for overlaying information. Light
      * colors will be lightened and dark colors will be darkened
      *
-     * @param color the color to adjust
-     * @param isDark whether {@code color} is light or dark
+     * @param color               the color to adjust
+     * @param isDark              whether {@code color} is light or dark
      * @param lightnessMultiplier the amount to modify the color e.g. 0.1f will alter it by 10%
      * @return the adjusted color
      */
-    public static @ColorInt int scrimify(@ColorInt int color,
-                                        boolean isDark,
-                                        @FloatRange(from = 0f, to = 1f) float lightnessMultiplier) {
+    public static @ColorInt
+    int scrimify(@ColorInt int color,
+                 boolean isDark,
+                 @FloatRange(from = 0f, to = 1f) float lightnessMultiplier) {
         float[] hsl = new float[3];
         android.support.v4.graphics.ColorUtils.colorToHSL(color, hsl);
 
@@ -146,8 +153,9 @@ public class ColorUtils {
         return android.support.v4.graphics.ColorUtils.HSLToColor(hsl);
     }
 
-    public static @ColorInt int scrimify(@ColorInt int color,
-                                        @FloatRange(from = 0f, to = 1f) float lightnessMultiplier) {
+    public static @ColorInt
+    int scrimify(@ColorInt int color,
+                 @FloatRange(from = 0f, to = 1f) float lightnessMultiplier) {
         return scrimify(color, isDark(color), lightnessMultiplier);
     }
 

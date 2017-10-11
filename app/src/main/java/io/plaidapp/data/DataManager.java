@@ -45,6 +45,24 @@ public abstract class DataManager extends BaseDataManager<List<? extends PlaidIt
     private final FilterAdapter filterAdapter;
     private Map<String, Integer> pageIndexes;
     private Map<String, Call> inflight;
+    private final FilterAdapter.FiltersChangedCallbacks filterListener =
+            new FilterAdapter.FiltersChangedCallbacks() {
+                @Override
+                public void onFiltersChanged(Source changedFilter) {
+                    if (changedFilter.active) {
+                        loadSource(changedFilter);
+                    } else { // filter deactivated
+                        final String key = changedFilter.key;
+                        if (inflight.containsKey(key)) {
+                            final Call call = inflight.get(key);
+                            if (call != null) call.cancel();
+                            inflight.remove(key);
+                        }
+                        // clear the page index for the source
+                        pageIndexes.put(key, 0);
+                    }
+                }
+            };
 
     public DataManager(Context context,
                        FilterAdapter filterAdapter) {
@@ -70,25 +88,6 @@ public abstract class DataManager extends BaseDataManager<List<? extends PlaidIt
             inflight.clear();
         }
     }
-
-    private final FilterAdapter.FiltersChangedCallbacks filterListener =
-            new FilterAdapter.FiltersChangedCallbacks() {
-        @Override
-        public void onFiltersChanged(Source changedFilter) {
-            if (changedFilter.active) {
-                loadSource(changedFilter);
-            } else { // filter deactivated
-                final String key = changedFilter.key;
-                if (inflight.containsKey(key)) {
-                    final Call call = inflight.get(key);
-                    if (call != null) call.cancel();
-                    inflight.remove(key);
-                }
-                // clear the page index for the source
-                pageIndexes.put(key, 0);
-            }
-        }
-    };
 
     private void loadSource(Source source) {
         if (source.active) {

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +14,17 @@
   limitations under the License.
   -->
 
-<GridLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:alignmentMode="alignBounds"
+    android:background="@android:color/transparent"
+    android:clipToPadding="false"
     android:columnCount="3"
     android:rowCount="7"
-    android:useDefaultMargins="false"
     android:transitionGroup="false"
-    android:clipToPadding="false"
-    android:background="@android:color/transparent">
+    android:useDefaultMargins="false">
     <!-- transparent background needed for the ripple on the spacer -->
 
     <!-- spacer for the image -->
@@ -39,68 +37,68 @@
 
     <LinearLayout
         android:id="@+id/shot_actions"
-        android:layout_columnSpan="3"
         android:layout_width="match_parent"
-        android:paddingStart="@dimen/padding_normal"
-        android:paddingTop="@dimen/spacing_large"
+        android:layout_columnSpan="3"
+        android:clipToPadding="false"
         android:paddingEnd="@dimen/padding_normal"
-        android:clipToPadding="false">
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingTop="@dimen/spacing_large">
 
         <Button
             android:id="@+id/shot_like_count"
+            style="@style/Widget.Plaid.InlineActionButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/avd_likes"
-            tools:text="33 likes"
-            style="@style/Widget.Plaid.InlineActionButton" />
+            tools:text="33 likes" />
 
         <Button
             android:id="@+id/shot_view_count"
+            style="@style/Widget.Plaid.InlineActionButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableTop="@drawable/avd_views"
             android:background="@null"
-            tools:text="33 views"
-            style="@style/Widget.Plaid.InlineActionButton" />
+            android:drawableTop="@drawable/avd_views"
+            tools:text="33 views" />
 
         <Button
             android:id="@+id/shot_share_action"
+            style="@style/Widget.Plaid.InlineActionButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginBottom="@dimen/spacing_normal"
+            android:layout_weight="1"
             android:drawableTop="@drawable/avd_share"
-            android:text="@string/share"
-            style="@style/Widget.Plaid.InlineActionButton" />
+            android:text="@string/share" />
 
     </LinearLayout>
 
     <io.plaidapp.ui.widget.BaselineGridTextView
         android:id="@+id/player_name"
-        android:layout_gravity="end"
         android:layout_width="wrap_content"
-        android:gravity="end"
+        android:layout_gravity="end"
         android:layout_marginTop="@dimen/padding_normal"
+        android:clickable="false"
+        android:gravity="end"
         android:paddingTop="@dimen/spacing_normal"
         android:textAppearance="@style/TextAppearance.CommentAuthor"
-        android:clickable="false"
         tools:text="—Nick B" />
 
     <io.plaidapp.ui.widget.CircularImageView
         android:id="@+id/player_avatar"
         android:layout_width="@dimen/avatar_bounds"
         android:layout_height="@dimen/avatar_bounds"
-        android:gravity="center_horizontal"
         android:layout_marginStart="@dimen/avatar_margin"
         android:layout_rowSpan="2"
+        android:foreground="@drawable/avatar_ripple"
+        android:gravity="center_horizontal"
         android:padding="@dimen/avatar_padding"
-        android:textColorLink="@color/dribbble_links"
-        android:textColorHighlight="@color/dribbble"
-        android:stateListAnimator="@animator/raise"
         android:src="@drawable/avatar_placeholder"
-        android:foreground="@drawable/avatar_ripple" />
+        android:stateListAnimator="@animator/raise"
+        android:textColorHighlight="@color/dribbble"
+        android:textColorLink="@color/dribbble_links" />
 
     <!-- can't use a marginEnd on the above image view as it pushes in the whole column so instead
          add another column to contain the below space element -->

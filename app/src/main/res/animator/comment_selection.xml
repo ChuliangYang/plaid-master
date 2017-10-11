@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,18 +18,18 @@
 
     <item android:state_activated="true">
         <objectAnimator
-            android:propertyName="translationZ"
-            android:valueTo="@dimen/z_card"
             android:duration="@android:integer/config_shortAnimTime"
-            android:interpolator="@android:interpolator/fast_out_slow_in" />
+            android:interpolator="@android:interpolator/fast_out_slow_in"
+            android:propertyName="translationZ"
+            android:valueTo="@dimen/z_card" />
     </item>
 
     <item>
         <objectAnimator
-            android:propertyName="translationZ"
-            android:valueTo="0dp"
             android:duration="@android:integer/config_shortAnimTime"
-            android:interpolator="@android:interpolator/fast_out_slow_in" />
+            android:interpolator="@android:interpolator/fast_out_slow_in"
+            android:propertyName="translationZ"
+            android:valueTo="0dp" />
     </item>
 
 </selector>

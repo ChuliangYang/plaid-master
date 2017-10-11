@@ -155,7 +155,7 @@ public class HomeGridItemAnimator extends SlideInItemAnimator {
         return super.isRunning()
                 || (runningAddToPocket != null && runningAddToPocket.second.isRunning())
                 || (runningStoryCommentsReturn != null
-                        && runningStoryCommentsReturn.second.isRunning());
+                && runningStoryCommentsReturn.second.isRunning());
     }
 
     private void animateAddToPocket(final FeedAdapter.DesignerNewsStoryHolder holder) {

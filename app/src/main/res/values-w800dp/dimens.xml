@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2016 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +17,7 @@
 <resources>
 
     <!-- designer news story -->
-    <dimen name="designer_news_story_comments_max_width">672dp</dimen> <!-- constrain text width (in increments of 56dp) -->
+    <dimen name="designer_news_story_comments_max_width">672dp
+    </dimen> <!-- constrain text width (in increments of 56dp) -->
 
 </resources>

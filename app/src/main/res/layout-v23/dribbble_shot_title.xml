@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +14,22 @@
   limitations under the License.
   -->
 
-<!-- layout_[width|height] not needed as this is only included in a GridLayout -->
-<!--suppress AndroidDomInspection -->
-<merge
+<!-- layout_[width|height] not needed as this is only included in a GridLayout --><!--suppress AndroidDomInspection -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     tools:showIn="@layout/dribbble_shot_description">
 
     <io.plaidapp.ui.widget.FabOverlapTextView
         android:id="@+id/shot_title"
-        android:layout_columnSpan="3"
         android:layout_width="match_parent"
-        android:paddingStart="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal"
-        android:paddingEnd="@dimen/padding_normal"
-        android:paddingBottom="@dimen/padding_normal"
+        android:layout_columnSpan="3"
         android:background="@color/light_grey"
         android:breakStrategy="simple"
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingEnd="@dimen/padding_normal"
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
         android:textAppearance="@style/TextAppearance.DribbbleShotTitle"
         app:fabGravity="bottom|end"
         app:fabOverlayHeight="@dimen/half_fab_plus_single_padding"

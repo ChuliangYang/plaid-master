@@ -38,7 +38,7 @@ import retrofit2.http.Query;
 
 /**
  * Models the Designer News API.
- *
+ * <p>
  * v1 docs: https://github.com/layervault/dn_api
  * v2 docs: https://github.com/DesignerNews/dn_api_v2
  */
