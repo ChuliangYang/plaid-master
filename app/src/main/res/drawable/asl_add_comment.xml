@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +18,21 @@
 
     <item
         android:id="@+id/focused"
-        android:state_activated="true"
-        android:drawable="@drawable/ic_comment_add" />
+        android:drawable="@drawable/ic_comment_add"
+        android:state_activated="true" />
 
     <item
         android:id="@+id/not_focused"
         android:drawable="@drawable/ic_comment_lines" />
 
     <transition
+        android:drawable="@drawable/avd_comment_to_add"
         android:fromId="@id/not_focused"
-        android:toId="@id/focused"
-        android:drawable="@drawable/avd_comment_to_add" />
+        android:toId="@id/focused" />
 
     <transition
+        android:drawable="@drawable/avd_add_to_comment"
         android:fromId="@id/focused"
-        android:toId="@id/not_focused"
-        android:drawable="@drawable/avd_add_to_comment" />
+        android:toId="@id/not_focused" />
 
 </animated-selector>

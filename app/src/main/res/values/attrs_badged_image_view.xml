@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +30,6 @@
             <!-- Push object to the end of its container, not changing its size. -->
             <flag name="end" value="0x00800005" />
         </attr>
-        <attr name="badgePadding" format="dimension|reference"/>
+        <attr name="badgePadding" format="dimension|reference" />
     </declare-styleable>
 </resources>
