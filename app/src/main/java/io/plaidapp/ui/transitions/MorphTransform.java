@@ -20,12 +20,14 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.TransitionManager;
 import android.transition.ChangeBounds;
 import android.transition.TransitionValues;
 import android.view.View;
@@ -59,6 +61,7 @@ public class MorphTransform extends ChangeBounds {
         this.endCornerRadius = endCornerRadius;
         setDuration(DEFAULT_DURATION);
         setPathMotion(new GravityArcMotion());
+
     }
 
     /**
@@ -103,6 +106,16 @@ public class MorphTransform extends ChangeBounds {
     }
 
     @Override
+    public void captureStartValues(TransitionValues transitionValues) {
+        super.captureStartValues(transitionValues);
+    }
+
+    @Override
+    public void captureEndValues(TransitionValues transitionValues) {
+        super.captureEndValues(transitionValues);
+    }
+
+    @Override
     public Animator createAnimator(final ViewGroup sceneRoot,
                                    final TransitionValues startValues,
                                    final TransitionValues endValues) {
@@ -121,6 +134,16 @@ public class MorphTransform extends ChangeBounds {
         final Animator corners =
                 ObjectAnimator.ofFloat(background, MorphDrawable.CORNER_RADIUS, endCornerRadius);
 
+
+        endValues.view.setBackgroundColor(startColor);
+        ValueAnimator valueAnimator=ValueAnimator.ofArgb(startColor,endColor);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                endValues.view.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
+            }
+        });
+//        valueAnimator.start();
         // ease in the dialog's child views (fade in & staggered slide up)
         if (endValues.view instanceof ViewGroup) {
             final ViewGroup vg = (ViewGroup) endValues.view;
@@ -134,14 +157,14 @@ public class MorphTransform extends ChangeBounds {
                         .alpha(1f)
                         .translationY(0f)
                         .setDuration(duration)
-                        .setStartDelay(duration)
+                        .setStartDelay(duration*2)
                         .setInterpolator(interpolator);
-                offset *= 1.8f;
+//                offset *= 1.8f;
             }
         }
 
         final AnimatorSet transition = new AnimatorSet();
-        transition.playTogether(changeBounds, corners, color);
+        transition.playTogether(changeBounds,valueAnimator);
         transition.setDuration(getDuration());
         transition.setInterpolator(interpolator);
         return transition;

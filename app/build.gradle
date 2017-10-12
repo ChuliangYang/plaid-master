@@ -24,8 +24,8 @@ def gitTag = 'git describe --tags'.execute([], project.rootDir).text.trim()
 def gitCommitCount = 100
 
 android {
-    compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "io.plaidapp"
@@ -60,6 +60,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    buildToolsVersion '26.0.2'
 }
 
 repositories {

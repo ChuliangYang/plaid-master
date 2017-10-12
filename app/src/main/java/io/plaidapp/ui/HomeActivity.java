@@ -271,6 +271,7 @@ public class HomeActivity extends Activity {
         super.onResume();
         dribbblePrefs.addLoginStatusListener(filtersAdapter);
         checkConnectivity();
+        animateToolbar();
     }
 
     @Override
@@ -713,13 +714,15 @@ public class HomeActivity extends Activity {
             // fade in and space out the title.  Animating the letterSpacing performs horribly so
             // fake it by setting the desired letterSpacing then animating the scaleX ¯\_(ツ)_/¯
             title.setAlpha(0f);
-            title.setScaleX(0.8f);
+            title.setScaleX(0.6f);
+            title.setScaleY(0.8f);
 
             title.animate()
                     .alpha(1f)
                     .scaleX(1f)
+                    .scaleY(1f)
                     .setStartDelay(300)
-                    .setDuration(900)
+                    .setDuration(4000)
                     .setInterpolator(AnimUtils.getFastOutSlowInInterpolator(this));
         }
     }
